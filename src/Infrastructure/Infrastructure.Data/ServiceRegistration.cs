@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UtterlyComplete.Domain.Interfaces.Repositories;
 using UtterlyComplete.Infrastructure.Data.Contexts;
+using UtterlyComplete.Infrastructure.Data.Repositories;
 
 namespace UtterlyComplete.Infrastructure.Data
 {
@@ -19,6 +21,8 @@ namespace UtterlyComplete.Infrastructure.Data
                     configuration.GetConnectionString("DefaultConnection"),
                     builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)
                 ));
+
+            services.AddScoped(typeof(ICrudRepository<>), typeof(CrudRepository<>));
         }
     }
 }
