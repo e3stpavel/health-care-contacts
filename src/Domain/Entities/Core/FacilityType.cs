@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace UtterlyComplete.Domain.Entities.Core
 {
-    public class FacilityType
+    public class FacilityType : Entity
     {
-        public int Id { get; set; }
-
         [Required]
         public string Description { get; set; } = null!;
 

@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 namespace UtterlyComplete.Domain.Entities.Core
 {
     [Table("ContactMechanisms")]
-    public abstract class ContactMechanism
+    public abstract class ContactMechanism : Entity
     {
-        public int Id { get; set; }
-
         public ICollection<Party> Parties { get; } = [];
     }
 }

@@ -8,11 +8,13 @@ namespace WebAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddDataAbstractionLayerInfrastructure(builder.Configuration);
+            builder.Services.AddDataAbstractionLayer(builder.Configuration);
+            builder.Services.AddControllers();
 
             var app = builder.Build();
 
             app.MapGet("/", () => "Hello World!");
+            app.MapControllers();
 
             app.Run();
         }

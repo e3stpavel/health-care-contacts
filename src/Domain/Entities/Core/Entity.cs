@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace UtterlyComplete.Domain.Entities.Core
 {
-    public class Party : Entity
+    public abstract class Entity
     {
-        public ICollection<ContactMechanism> ContactMechanisms { get; } = [];
+        public int Id { get; set; }
     }
 }

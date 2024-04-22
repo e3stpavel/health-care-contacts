@@ -14,7 +14,7 @@ namespace UtterlyComplete.Infrastructure.Data
 {
     public static class ServiceRegistration
     {
-        public static void AddDataAbstractionLayerInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static void AddDataAbstractionLayer(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<ApplicationDbContext>(options => options
                 .UseSqlite(
