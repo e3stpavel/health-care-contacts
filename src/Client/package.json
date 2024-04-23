@@ -13,10 +13,12 @@
   "dependencies": {
     "@astrojs/check": "^0.5.10",
     "astro": "^4.6.3",
+    "sharp": "^0.33.3",
     "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.15.0",
+    "@iconify-json/material-symbols": "^1.1.78",
     "@unocss/eslint-plugin": "^0.59.4",
     "@unocss/reset": "^0.59.4",
     "eslint": "^9.1.1",

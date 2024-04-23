@@ -26,6 +26,11 @@ export default defineConfig<Theme>({
 
   theme: {
     colors: {
+      brand: {
+        'blue': '#03668D',
+        'green': '#02523D',
+        'navy-blue': '#023C52',
+      },
     },
     fontFamily: {
       sans: `-apple-system,BlinkMacSystemFont,'Pretendard Std Variable','Pretendard Std',Pretendard,ui-sans-serif,system-ui,${sans.split(',').slice(4).join(',')}`,

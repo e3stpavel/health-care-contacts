@@ -1,0 +1,12 @@
+---
+interface Props {
+  label: string
+  size?: 'sm' | 'md'
+}
+
+const { label, size } = Astro.props
+
+---
+
+<a href="/" class:list={['text-brand-blue font-medium tracking-wide underline underline-offset-4', { 'text-sm': size === 'sm' }]}>{ label }</a>
+

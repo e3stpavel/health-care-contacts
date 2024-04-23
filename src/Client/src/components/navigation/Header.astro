@@ -1,0 +1,40 @@
+---
+import { Image } from 'astro:assets'
+import logo from '../../assets/logotype.svg'
+import mark from '../../assets/wordmark.svg'
+import IconButton from '../buttons/IconButton.astro'
+import HeaderItem from './Item.astro'
+
+const items = [
+  { title: 'Parties' },
+  { title: 'Facilities' },
+]
+---
+
+<header>
+  <nav class="mx-auto max-w-screen-2xl px-6 py-1 lg:px-8" aria-label="Global Site Navigation">
+    <div class="flex items-center justify-between border-b border-b-3 border-gray-300/40 border-b-dotted py-3">
+      <div class="flex flex-1">
+        <a href="/">
+          <span class="sr-only">Utterly Complete Health Care</span>
+          <Image class="hidden sm:block" src={logo} alt="" />
+          <Image class="sm:hidden" src={mark} height="48" alt="" />
+        </a>
+      </div>
+      <div class="flex lg:hidden">
+        <IconButton icon="i-material-symbols-menu-rounded" label="Open menu" style="ghost" />
+      </div>
+      {/* TODO: make the mobile nav work as modal */}
+      <div class="hidden lg:(flex gap-x-12)">
+        {
+          items.map(item => (
+            <HeaderItem title={item.title} />
+          ))
+        }
+      </div>
+      <div class="hidden lg:(flex flex-1 justify-end)">
+        <HeaderItem title="Source code" />
+      </div>
+    </div>
+  </nav>
+</header>

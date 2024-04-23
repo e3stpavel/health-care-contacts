@@ -1,0 +1,11 @@
+---
+interface Props {
+  title: string
+  size?: 'sm' | 'md'
+}
+
+const { title, size } = Astro.props
+
+---
+
+<a href="/" class:list={['text-gray-900 font-medium tracking-wide', { 'text-sm': size === 'sm' }]}>{ title }</a>
