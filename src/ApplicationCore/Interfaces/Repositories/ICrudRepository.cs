@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UtterlyComplete.Domain.Interfaces.Repositories
+namespace UtterlyComplete.ApplicationCore.Interfaces.Repositories
 {
     public interface ICrudRepository<T> : IRepository where T : class
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
-using UtterlyComplete.Domain.Entities.Core;
-using UtterlyComplete.Domain.Interfaces.Repositories;
+using UtterlyComplete.Domain.Common;
+using UtterlyComplete.ApplicationCore.Interfaces.Repositories;
 
 namespace WebAPI.Controllers
 {

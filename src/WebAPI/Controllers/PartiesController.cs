@@ -1,5 +1,5 @@
-﻿using UtterlyComplete.Domain.Entities.Core;
-using UtterlyComplete.Domain.Interfaces.Repositories;
+﻿using UtterlyComplete.Domain.Core;
+using UtterlyComplete.ApplicationCore.Interfaces.Repositories;
 
 namespace WebAPI.Controllers
 {

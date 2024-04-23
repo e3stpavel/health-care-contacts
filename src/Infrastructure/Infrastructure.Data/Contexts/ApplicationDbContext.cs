@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UtterlyComplete.Domain.Entities.ContactMechanisms;
-using UtterlyComplete.Domain.Entities.Core;
-using UtterlyComplete.Domain.Entities.Facilities;
+using UtterlyComplete.Domain.ContactMechanisms;
+using UtterlyComplete.Domain.Core;
+using UtterlyComplete.Domain.Facilities;
 
 namespace UtterlyComplete.Infrastructure.Data.Contexts
 {

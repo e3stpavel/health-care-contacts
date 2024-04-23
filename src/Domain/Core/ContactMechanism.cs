@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UtterlyComplete.Domain.Common;
 
-namespace UtterlyComplete.Domain.Entities.Core
+namespace UtterlyComplete.Domain.Core
 {
     [Table("ContactMechanisms")]
     public abstract class ContactMechanism : Entity

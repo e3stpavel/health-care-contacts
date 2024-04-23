@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UtterlyComplete.Domain.Entities.Core
+namespace UtterlyComplete.ApplicationCore.Interfaces.Repositories
 {
-    public abstract class Entity
+    public interface IRepository
     {
-        public int Id { get; set; }
+        Task<bool> SaveAsync();
     }
 }

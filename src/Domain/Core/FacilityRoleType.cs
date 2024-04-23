@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UtterlyComplete.Domain.Entities.Core
+namespace UtterlyComplete.Domain.Core
 {
     public enum FacilityRoleTypeId : int
     {
