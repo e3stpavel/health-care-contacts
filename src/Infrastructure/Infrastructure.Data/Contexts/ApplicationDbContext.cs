@@ -23,9 +23,9 @@ namespace UtterlyComplete.Infrastructure.Data.Contexts
             // todo: probably there is a better way to declare entity subtypes
 
             // register contact mechanisms
-            modelBuilder.Entity<ElectronicAddress>();
             modelBuilder.Entity<PostalAddress>();
             modelBuilder.Entity<TelecommunicationsNumber>();
+            modelBuilder.Entity<ElectronicAddress>();
 
             // register facilities
             modelBuilder.Entity<AmbulatorySurgeryCenter>();
@@ -35,6 +35,12 @@ namespace UtterlyComplete.Infrastructure.Data.Contexts
             modelBuilder.Entity<MedicalBuilding>();
             modelBuilder.Entity<MedicalOffice>();
             modelBuilder.Entity<Room>();
+
+            modelBuilder.Entity<Party>()
+                .HasMany(e => e.ContactMechanisms)
+                .WithMany(e => e.Parties)
+                .UsingEntity<PartyContactMechanism>(
+                    j => j.HasKey(e => new { e.PartyId, e.ContactMechanismId, e.FromDate }));
         }
     }
 }

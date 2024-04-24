@@ -13,6 +13,8 @@ namespace UtterlyComplete.Domain.Core
         [Required]
         public string Description { get; set; } = null!;
 
+        public int? SquareFootage { get; set; }
+
         public int? PartOfFacilityId { get; set; }
 
         public Facility? PartOfFacility { get; set; }
