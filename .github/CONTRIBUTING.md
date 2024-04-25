@@ -4,7 +4,7 @@ The following document outlines the guidelines on how to contribute to the proje
 ## Projects tab
 You can track all the progress, add ideas and create issues using [GitHub Projects](). You can find the attached project under the projects tab.
 
-![Project](image-1.png)
+![Project](https://github.com/e3stpavel/health-care-contacts/assets/70956582/ec3cfe55-1499-4a9e-9859-8cfad845944d)
 
 ## Create branch
 When you assigned a new issue, you should create a new branch (usually from `main`) and give it a meaningful name which somehow describes the scope (what are you doing in this branch). Try to keep branch names short and concise.
@@ -56,17 +56,17 @@ _Example_
 ### Reviewers
 It is crucial to request a code review from one of team members. You cannot merge into main branch without the approve!
 
-![Merge blocked](image-3.png)
+![Merge blocked](https://github.com/e3stpavel/health-care-contacts/assets/70956582/85b91ae7-4aab-4320-b7f6-122fc101a1ee)
 
 ### Projects
 Don't forget to add appropriate values under the projects tab which represent the PR status, priority etc.
 
-![PR Projects tab](image-2.png)
+![PR Projects tab](https://github.com/e3stpavel/health-care-contacts/assets/70956582/69e27792-164a-46ac-9d26-493baa1a57d0)
 
 ### Development
 You can link PR to the Issue using Development tab. By doing that, Issue will be automatically closed (status: `Done`) when PR is successfully merged.
 
-![Link issue](image-4.png)
+![Link issue](https://github.com/e3stpavel/health-care-contacts/assets/70956582/7f93d745-0651-4e62-b486-7658459b0ec6)
 
 ### Merge
 When you see a green light you can push the `Merge` button, leaving all the values as they are. After the successful merge you can delete the branch by clicking `Delete branch` button.
