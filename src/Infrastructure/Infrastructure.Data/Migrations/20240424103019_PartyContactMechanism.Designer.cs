@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UtterlyComplete.Infrastructure.Data.Contexts;
 
@@ -10,9 +11,11 @@ using UtterlyComplete.Infrastructure.Data.Contexts;
 namespace UtterlyComplete.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240424103019_PartyContactMechanism")]
+    partial class PartyContactMechanism
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.4");
@@ -35,7 +38,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
 
                     b.HasIndex("FacilityId");
 
-                    b.ToTable("ContactMechanisms", (string)null);
+                    b.ToTable("ContactMechanisms");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("ContactMechanism");
 
@@ -72,7 +75,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
 
                     b.HasIndex("PartOfFacilityId");
 
-                    b.ToTable("Facilities", (string)null);
+                    b.ToTable("Facilities");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Facility");
 
@@ -91,7 +94,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FacilityType", (string)null);
+                    b.ToTable("FacilityType");
                 });
 
             modelBuilder.Entity("UtterlyComplete.Domain.Core.Party", b =>
@@ -107,7 +110,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
 
                     b.HasIndex("FacilityId");
 
-                    b.ToTable("Parties", (string)null);
+                    b.ToTable("Parties");
                 });
 
             modelBuilder.Entity("UtterlyComplete.Domain.Core.PartyContactMechanism", b =>
@@ -137,7 +140,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
 
                     b.HasIndex("ContactMechanismId");
 
-                    b.ToTable("PartyContactMechanism", (string)null);
+                    b.ToTable("PartyContactMechanism");
                 });
 
             modelBuilder.Entity("UtterlyComplete.Domain.ContactMechanisms.ElectronicAddress", b =>
@@ -149,7 +152,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("ElectronicAddressString");
 
-                    b.ToTable("ContactMechanisms", (string)null);
+                    b.ToTable("ContactMechanisms");
 
                     b.HasDiscriminator().HasValue("ElectronicAddress");
                 });
@@ -165,7 +168,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
                     b.Property<string>("AddressLine2")
                         .HasColumnType("TEXT");
 
-                    b.ToTable("ContactMechanisms", (string)null);
+                    b.ToTable("ContactMechanisms");
 
                     b.HasDiscriminator().HasValue("PostalAddress");
                 });
@@ -185,7 +188,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
                     b.Property<string>("CountryCode")
                         .HasColumnType("TEXT");
 
-                    b.ToTable("ContactMechanisms", (string)null);
+                    b.ToTable("ContactMechanisms");
 
                     b.HasDiscriminator().HasValue("TelecommunicationsNumber");
                 });
