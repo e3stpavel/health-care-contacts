@@ -1,12 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UtterlyComplete.Domain.ContactMechanisms;
 using UtterlyComplete.Domain.Core;
 using UtterlyComplete.Domain.Facilities;
+using UtterlyComplete.Infrastructure.Data.Configurations;
 
 namespace UtterlyComplete.Infrastructure.Data.Contexts
 {
@@ -36,11 +32,7 @@ namespace UtterlyComplete.Infrastructure.Data.Contexts
             modelBuilder.Entity<MedicalOffice>();
             modelBuilder.Entity<Room>();
 
-            modelBuilder.Entity<Party>()
-                .HasMany(e => e.ContactMechanisms)
-                .WithMany(e => e.Parties)
-                .UsingEntity<PartyContactMechanism>(
-                    j => j.HasKey(e => new { e.PartyId, e.ContactMechanismId, e.FromDate }));
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(PartyEntityTypeConfiguration).Assembly);
         }
     }
 }

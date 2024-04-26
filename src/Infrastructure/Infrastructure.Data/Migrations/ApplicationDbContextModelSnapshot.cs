@@ -35,7 +35,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
 
                     b.HasIndex("FacilityId");
 
-                    b.ToTable("ContactMechanisms");
+                    b.ToTable("ContactMechanisms", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("ContactMechanism");
 
@@ -72,7 +72,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
 
                     b.HasIndex("PartOfFacilityId");
 
-                    b.ToTable("Facilities");
+                    b.ToTable("Facilities", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Facility");
 
@@ -91,7 +91,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FacilityType");
+                    b.ToTable("FacilityType", (string)null);
                 });
 
             modelBuilder.Entity("UtterlyComplete.Domain.Core.Party", b =>
@@ -107,7 +107,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
 
                     b.HasIndex("FacilityId");
 
-                    b.ToTable("Parties");
+                    b.ToTable("Parties", (string)null);
                 });
 
             modelBuilder.Entity("UtterlyComplete.Domain.Core.PartyContactMechanism", b =>
@@ -137,7 +137,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
 
                     b.HasIndex("ContactMechanismId");
 
-                    b.ToTable("PartyContactMechanism");
+                    b.ToTable("PartyContactMechanism", (string)null);
                 });
 
             modelBuilder.Entity("UtterlyComplete.Domain.ContactMechanisms.ElectronicAddress", b =>
@@ -149,7 +149,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("ElectronicAddressString");
 
-                    b.ToTable("ContactMechanisms");
+                    b.ToTable("ContactMechanisms", (string)null);
 
                     b.HasDiscriminator().HasValue("ElectronicAddress");
                 });
@@ -165,7 +165,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
                     b.Property<string>("AddressLine2")
                         .HasColumnType("TEXT");
 
-                    b.ToTable("ContactMechanisms");
+                    b.ToTable("ContactMechanisms", (string)null);
 
                     b.HasDiscriminator().HasValue("PostalAddress");
                 });
@@ -185,7 +185,7 @@ namespace UtterlyComplete.Infrastructure.Data.Migrations
                     b.Property<string>("CountryCode")
                         .HasColumnType("TEXT");
 
-                    b.ToTable("ContactMechanisms");
+                    b.ToTable("ContactMechanisms", (string)null);
 
                     b.HasDiscriminator().HasValue("TelecommunicationsNumber");
                 });
