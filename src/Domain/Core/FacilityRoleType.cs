@@ -19,9 +19,6 @@ namespace UtterlyComplete.Domain.Core
         public FacilityRoleTypeId Id { get; set; }
 
         [Required]
-        public string Name { get; set; } = null!;
-
-        // todo: navigation property to join entity
-        //public ICollection<> PartyFacilities { get; } = [];
+        public string Value { get; set; } = null!;
     }
 }

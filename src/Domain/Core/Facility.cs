@@ -25,6 +25,8 @@ namespace UtterlyComplete.Domain.Core
 
         public ICollection<Party> Parties { get; } = [];
 
+        public ICollection<PartyFacility> PartyFacilities { get; } = [];
+
         public int FacilityTypeId { get; set; }
 
         public FacilityType FacilityType { get; set; } = null!;

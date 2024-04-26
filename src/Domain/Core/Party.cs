@@ -13,5 +13,9 @@ namespace UtterlyComplete.Domain.Core
         public ICollection<ContactMechanism> ContactMechanisms { get; } = [];
 
         public ICollection<PartyContactMechanism> PartyContactMechanisms { get; } = [];
+
+        public ICollection<Facility> Facilities { get; } = [];
+
+        public ICollection<PartyFacility> PartyFacilities { get; } = [];
     }
 }
