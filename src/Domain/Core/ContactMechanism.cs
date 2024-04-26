@@ -12,5 +12,7 @@ namespace UtterlyComplete.Domain.Core
     public abstract class ContactMechanism : Entity
     {
         public ICollection<Party> Parties { get; } = [];
+
+        public ICollection<PartyContactMechanism> PartyContactMechanisms { get; } = [];
     }
 }
