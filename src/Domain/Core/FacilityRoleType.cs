@@ -9,6 +9,7 @@ namespace UtterlyComplete.Domain.Core
 {
     public enum FacilityRoleTypeId : int
     {
+        UNKNOWN,
         OWNED,
         LEASED,
         BOOKED
