@@ -13,6 +13,11 @@ namespace UtterlyComplete.Infrastructure.Data.Configurations
                 .WithMany(e => e.Parties)
                 .UsingEntity<PartyContactMechanism>(
                     j => j.HasKey(e => new { e.PartyId, e.ContactMechanismId, e.FromDate }));
+
+            builder
+                .HasMany(e => e.Facilities)
+                .WithMany(e => e.Parties)
+                .UsingEntity<PartyFacility>();
         }
     }
 }
