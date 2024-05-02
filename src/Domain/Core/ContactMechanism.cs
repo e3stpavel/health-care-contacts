@@ -13,6 +13,8 @@ namespace UtterlyComplete.Domain.Core
     {
         public ICollection<Party> Parties { get; } = [];
 
+        public ICollection<Facility> Facilities { get; } = [];
+
         public ICollection<PartyContactMechanism> PartyContactMechanisms { get; } = [];
     }
 }
