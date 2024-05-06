@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using UtterlyComplete.Domain.Common;
 
 namespace UtterlyComplete.Domain.Core
@@ -13,6 +8,6 @@ namespace UtterlyComplete.Domain.Core
         [Required]
         public string Description { get; set; } = null!;
 
-        public ICollection<Facility> Facilities { get; } = [];
+        public virtual ICollection<Facility> Facilities { get; } = [];
     }
 }
