@@ -1,13 +1,13 @@
 ---
 import { Image } from 'astro:assets'
-import logo from '../../assets/logotype.svg'
-import mark from '../../assets/wordmark.svg'
-import IconButton from '../buttons/IconButton.astro'
 import HeaderItem from './Item.astro'
+import logo from '~/assets/logotype.svg'
+import mark from '~/assets/wordmark.svg'
+import IconButton from '~/components/buttons/IconButton.astro'
 
 const items = [
-  { title: 'Parties' },
-  { title: 'Facilities' },
+  { label: 'Parties' },
+  { label: 'Facilities' },
 ]
 ---
 
@@ -28,12 +28,12 @@ const items = [
       <div class="hidden lg:(flex gap-x-12)">
         {
           items.map(item => (
-            <HeaderItem title={item.title} />
+            <HeaderItem label={item.label} />
           ))
         }
       </div>
       <div class="hidden lg:(flex flex-1 justify-end)">
-        <HeaderItem title="Source code" />
+        <HeaderItem label="Source code" />
       </div>
     </div>
   </nav>
