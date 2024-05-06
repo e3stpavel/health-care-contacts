@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using UtterlyComplete.Domain.Core;
 
 namespace UtterlyComplete.Domain.ContactMechanisms
 {
-    public sealed class PostalAddress : ContactMechanism
+    public class PostalAddress : ContactMechanism
     {
         [Required]
         public string AddressLine1 { get; set; } = null!;

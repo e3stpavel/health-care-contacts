@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UtterlyComplete.Domain.Core;
+﻿using UtterlyComplete.Domain.Core;
 
 namespace UtterlyComplete.Domain.Facilities
 {
-    public sealed class MedicalOffice : Facility
+    public class MedicalOffice : Facility
     {
-
     }
 }

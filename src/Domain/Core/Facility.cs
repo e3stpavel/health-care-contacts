@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using UtterlyComplete.Domain.Common;
 
 namespace UtterlyComplete.Domain.Core
@@ -17,18 +12,18 @@ namespace UtterlyComplete.Domain.Core
 
         public int? PartOfFacilityId { get; set; }
 
-        public Facility? PartOfFacility { get; set; }
+        public virtual Facility? PartOfFacility { get; set; }
 
-        public ICollection<Facility> ConsistsOfFacilities { get; } = [];
+        public virtual ICollection<Facility> ConsistsOfFacilities { get; } = [];
 
-        public ICollection<ContactMechanism> ContactMechanisms { get; } = [];
+        public virtual ICollection<ContactMechanism> ContactMechanisms { get; } = [];
 
-        public ICollection<Party> Parties { get; } = [];
+        public virtual ICollection<Party> Parties { get; } = [];
 
-        public ICollection<PartyFacility> PartyFacilities { get; } = [];
+        public virtual ICollection<PartyFacility> PartyFacilities { get; } = [];
 
         public int FacilityTypeId { get; set; }
 
-        public FacilityType FacilityType { get; set; } = null!;
+        public virtual FacilityType FacilityType { get; set; } = null!;
     }
 }

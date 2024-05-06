@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UtterlyComplete.Domain.Core
+﻿namespace UtterlyComplete.Domain.Core
 {
     public class PartyFacility
     {
@@ -14,6 +8,6 @@ namespace UtterlyComplete.Domain.Core
 
         public FacilityRoleTypeId FacilityRoleTypeId { get; set; }
 
-        public FacilityRoleType FacilityRoleType { get; set; } = null!;
+        public virtual FacilityRoleType FacilityRoleType { get; set; } = null!;
     }
 }
