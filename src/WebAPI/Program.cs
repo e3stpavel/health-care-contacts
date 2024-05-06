@@ -8,9 +8,10 @@ namespace WebAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddDataAbstractionLayer(builder.Configuration);
-            builder.Services.AddRepositories();
-            builder.Services.AddControllers();
+            builder.Services
+                .AddDataAbstractionLayer(builder.Configuration)
+                .AddRepositories()
+                .AddControllers();
 
             var app = builder.Build();
 

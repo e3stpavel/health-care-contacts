@@ -9,7 +9,7 @@ namespace UtterlyComplete.Infrastructure.Data
 {
     public static class ServiceRegistration
     {
-        public static void AddDataAbstractionLayer(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddDataAbstractionLayer(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<ApplicationDbContext>(options => options
                 .UseLazyLoadingProxies()
@@ -17,11 +17,15 @@ namespace UtterlyComplete.Infrastructure.Data
                     configuration.GetConnectionString("DefaultConnection"),
                     builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)
                 ));
+
+            return services;
         }
 
-        public static void AddRepositories(this IServiceCollection services)
+        public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddScoped(typeof(ICrudRepository<>), typeof(CrudRepository<>));
+
+            return services;
         }
     }
 }
