@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UtterlyComplete.ApplicationCore.Interfaces.Repositories;
+﻿using UtterlyComplete.ApplicationCore.Interfaces.Repositories;
 using UtterlyComplete.Infrastructure.Data.Contexts;
 
 namespace UtterlyComplete.Infrastructure.Data.Repositories
