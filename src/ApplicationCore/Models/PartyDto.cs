@@ -4,5 +4,4 @@ namespace UtterlyComplete.ApplicationCore.Models
 {
     public record PartyDto(
         int Id, IReadOnlyCollection<ContactMechanismDto> ContactMechanisms) : EntityDto(Id);
-    // todo: avoid type narrowing
 }
