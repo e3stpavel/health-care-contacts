@@ -3,5 +3,7 @@
 namespace UtterlyComplete.ApplicationCore.Models
 {
     public record PartyDto(
-        int Id, IReadOnlyCollection<ContactMechanismDto> ContactMechanisms) : EntityDto(Id);
+        int Id,
+        IReadOnlyCollection<ContactMechanismDto> ContactMechanisms,
+        IReadOnlyCollection<FacilityDto> Facilities) : EntityDto(Id);
 }
