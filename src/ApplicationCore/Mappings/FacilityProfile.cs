@@ -22,8 +22,10 @@ namespace UtterlyComplete.ApplicationCore.Mappings
                     // convert to PascalCase
                     string type = Regex.Replace(src.Type, @"\b\p{Ll}", match => match.Value.ToUpperInvariant());
 
-                    IEnumerable<Type> facilityTypes = typeof(AmbulatorySurgeryCenter).Assembly.GetTypes()
-                        .Where(type => type.Namespace == "UtterlyComplete.Domain.Facilities" && type.IsClass && type.IsSubclassOf(typeof(Facility)));
+                    Type someFacilityType = typeof(AmbulatorySurgeryCenter);
+
+                    IEnumerable<Type> facilityTypes = someFacilityType.Assembly.GetTypes()
+                        .Where(type => type.Namespace == someFacilityType.Namespace && type.IsClass && type.IsSubclassOf(typeof(Facility)));
 
                     Type facilityType = facilityTypes.FirstOrDefault(facilityType => type == facilityType.Name)
                         ?? throw new NotImplementedException($"Entity type cannot be extracted or is not implemented ('{type}')");
