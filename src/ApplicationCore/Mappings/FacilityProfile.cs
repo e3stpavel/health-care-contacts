@@ -22,18 +22,13 @@ namespace UtterlyComplete.ApplicationCore.Mappings
                     // convert to PascalCase
                     string type = Regex.Replace(src.Type, @"\b\p{Ll}", match => match.Value.ToUpperInvariant());
 
-                    // todo: maybe loop thru Facilities.Assembly
-                    return type switch
-                    {
-                        nameof(AmbulatorySurgeryCenter) => context.Mapper.Map<AmbulatorySurgeryCenter>(src),
-                        nameof(Clinic) => context.Mapper.Map<Clinic>(src),
-                        nameof(Floor) => context.Mapper.Map<Floor>(src),
-                        nameof(Hospital) => context.Mapper.Map<Hospital>(src),
-                        nameof(MedicalBuilding) => context.Mapper.Map<MedicalBuilding>(src),
-                        nameof(MedicalOffice) => context.Mapper.Map<MedicalOffice>(src),
-                        nameof(Room) => context.Mapper.Map<Room>(src),
-                        _ => throw new NotImplementedException($"Entity type cannot be extracted or is not implemented ('{type}')"),
-                    };
+                    IEnumerable<Type> facilityTypes = typeof(AmbulatorySurgeryCenter).Assembly.GetTypes()
+                        .Where(type => type.Namespace == "UtterlyComplete.Domain.Facilities" && type.IsClass && type.IsSubclassOf(typeof(Facility)));
+
+                    Type facilityType = facilityTypes.FirstOrDefault(facilityType => type == facilityType.Name)
+                        ?? throw new NotImplementedException($"Entity type cannot be extracted or is not implemented ('{type}')");
+                    
+                    return (Facility)context.Mapper.Map(src, src.GetType(), facilityType);
                 })
                 .ForMember(nameof(Facility.Type), opt => opt.Ignore());
 
