@@ -1,4 +1,5 @@
-﻿using UtterlyComplete.ApplicationCore.Models.Common;
+﻿using System.Text.Json.Serialization;
+using UtterlyComplete.ApplicationCore.Models.Common;
 
 namespace UtterlyComplete.ApplicationCore.Models
 {
@@ -9,5 +10,5 @@ namespace UtterlyComplete.ApplicationCore.Models
         string FacilityTypeDescription,
         int? SquareFootage,
         FacilityDto? PartOfFacility,
-        IReadOnlyCollection<ContactMechanismDto> ContactMechanisms) : EntityDto(Id);
+        [property: JsonPropertyName("contacts")] IReadOnlyCollection<ContactMechanismDto> ContactMechanisms) : EntityDto(Id);
 }

@@ -22,6 +22,7 @@ namespace UtterlyComplete.ApplicationCore.Mappings
                     // convert to PascalCase
                     string type = Regex.Replace(src.Type, @"\b\p{Ll}", match => match.Value.ToUpperInvariant());
 
+                    // todo: maybe loop thru Facilities.Assembly
                     return type switch
                     {
                         nameof(AmbulatorySurgeryCenter) => context.Mapper.Map<AmbulatorySurgeryCenter>(src),
