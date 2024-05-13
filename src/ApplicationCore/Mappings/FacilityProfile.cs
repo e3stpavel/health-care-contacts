@@ -9,6 +9,17 @@ namespace UtterlyComplete.ApplicationCore.Mappings
 {
     internal class FacilityProfile : Profile
     {
+        private static IEnumerable<Type> FacilityTypes
+        {
+            get
+            {
+                Type someFacilityType = typeof(AmbulatorySurgeryCenter);
+
+                return someFacilityType.Assembly.GetTypes()
+                    .Where(type => type.Namespace == someFacilityType.Namespace && type.IsClass && type.IsSubclassOf(typeof(Facility)));
+            }
+        }
+
         public FacilityProfile()
         {
             CreateMap<Facility, FacilityDto>()
@@ -22,38 +33,19 @@ namespace UtterlyComplete.ApplicationCore.Mappings
                     // convert to PascalCase
                     string type = Regex.Replace(src.Type, @"\b\p{Ll}", match => match.Value.ToUpperInvariant());
 
-                    Type someFacilityType = typeof(AmbulatorySurgeryCenter);
-
-                    IEnumerable<Type> facilityTypes = someFacilityType.Assembly.GetTypes()
-                        .Where(type => type.Namespace == someFacilityType.Namespace && type.IsClass && type.IsSubclassOf(typeof(Facility)));
-
-                    Type facilityType = facilityTypes.FirstOrDefault(facilityType => type == facilityType.Name)
+                    Type facilityType = FacilityTypes.FirstOrDefault(facilityType => type == facilityType.Name)
                         ?? throw new NotImplementedException($"Entity type cannot be extracted or is not implemented ('{type}')");
                     
                     return (Facility)context.Mapper.Map(src, src.GetType(), facilityType);
                 })
                 .ForMember(nameof(Facility.Type), opt => opt.Ignore());
 
-            CreateMap<AmbulatorySurgeryCenter, FacilityDto>()
-                .ReverseMap();
-
-            CreateMap<Clinic, FacilityDto>()
-                .ReverseMap();
-
-            CreateMap<Floor, FacilityDto>()
-                .ReverseMap();
-
-            CreateMap<Hospital, FacilityDto>()
-                .ReverseMap();
-
-            CreateMap<MedicalBuilding, FacilityDto>()
-                .ReverseMap();
-
-            CreateMap<MedicalOffice, FacilityDto>()
-                .ReverseMap();
-
-            CreateMap<Room, FacilityDto>()
-                .ReverseMap();
+            // create map for all derived facilities
+            foreach (Type facilityType in FacilityTypes)
+            {
+                CreateMap(facilityType, typeof(FacilityDto))
+                    .ReverseMap();
+            }
         }
     }
 }
