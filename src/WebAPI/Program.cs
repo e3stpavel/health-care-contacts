@@ -13,6 +13,7 @@ namespace WebAPI
                 .AddDataAbstractionLayer(builder.Configuration)
                 .AddRepositories()
                 .AddMappers()
+                .AddApplicationCoreServices()
                 .AddControllers();
 
             var app = builder.Build();

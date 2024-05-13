@@ -1,66 +1,61 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
-using UtterlyComplete.Domain.Common;
-using UtterlyComplete.ApplicationCore.Interfaces.Repositories;
 using UtterlyComplete.ApplicationCore.Models.Common;
-using AutoMapper;
+using UtterlyComplete.ApplicationCore.Interfaces.Services;
+using ErrorOr;
 
 namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BaseController<TEntity, TDto> : ControllerBase
-        where TEntity : Entity
-        where TDto : EntityDto
+    public class BaseController<T> : ControllerBase
+        where T : EntityDto
     {
-        private readonly IMapper _mapper;
+        private readonly IService<T> _service;
 
-        private readonly ICrudRepository<TEntity> _repository;
-
-        public BaseController(IMapper mapper, ICrudRepository<TEntity> repository)
+        public BaseController(IService<T> service)
         {
-            _mapper = mapper;
-            _repository = repository;
+            _service = service;
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<TDto>>> FindAll()
+        public async Task<ActionResult<IReadOnlyList<T>>> FindAll()
         {
-            IReadOnlyList<TEntity> entities = await _repository.FindAllAsync();
-
-            return _mapper.Map<List<TDto>>(entities);
+            return Ok(await _service.GetAllAsync());
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<TDto>> FindById(int id)
+        public async Task<ActionResult<T>> FindById(int id)
         {
-            TEntity? entity = await _repository.FindByIdAsync(id);
+            ErrorOr<T> dtoOrError = await _service.GetByIdAsync(id);
 
-            if (entity == null)
-                return NotFound();
+            if (dtoOrError.IsError)
+            {
+                Error error = dtoOrError.FirstError;
 
-            return _mapper.Map<TDto>(entity);
+                if (error.Type == ErrorType.NotFound)
+                    return NotFound();
+
+                return Problem(title: error.Description, type: error.Code);
+            }
+
+            return dtoOrError.Value;
         }
 
         [HttpPost]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<TDto>> Create([FromBody] TDto dto)
+        public async Task<ActionResult<T>> Create([FromBody] T dto)
         {
             // todo: figure out the validation
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            TEntity entity = _mapper.Map<TEntity>(dto);
-
-            entity = await _repository.AddAsync(entity);
-            await _repository.SaveAsync();
-
-            dto = _mapper.Map<TDto>(entity);
+            dto = await _service.CreateAsync(dto);
 
             return CreatedAtAction(nameof(Create), new { dto.Id }, dto);
         }
@@ -70,23 +65,27 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<TDto>> Update(int id, [FromBody] TDto dto)
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        public async Task<ActionResult<T>> Update(int id, [FromBody] T dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            TEntity? entity = await _repository.FindByIdAsync(id);
+            ErrorOr<T> dtoOrError = await _service.UpdateAsync(id, dto);
 
-            if (entity == null)
-                return NotFound();
+            if (dtoOrError.IsError)
+            {
+                Error error = dtoOrError.FirstError;
 
-            // ignoring `id` being updated
-            entity = _mapper.Map(dto with { Id = entity.Id }, entity);
+                return error.Type switch
+                {
+                    ErrorType.NotFound => NotFound(),
+                    ErrorType.Forbidden => UnprocessableEntity(), // todo: think about proper code?
+                    _ => Problem(title: error.Description, type: error.Code)
+                };
+            }
 
-            _repository.Update(entity);
-            await _repository.SaveAsync();
-
-            return _mapper.Map<TDto>(entity);
+            return dtoOrError.Value;
         }
 
         [HttpDelete("{id}")]
@@ -94,13 +93,17 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Delete(int id)
         {
-            TEntity? entity = await _repository.FindByIdAsync(id);
+            ErrorOr<Deleted> deletedOrError = await _service.DeleteAsync(id);
 
-            if (entity == null)
-                return NotFound();
+            if (deletedOrError.IsError)
+            {
+                Error error = deletedOrError.FirstError;
 
-            _repository.Remove(entity);
-            await _repository.SaveAsync();
+                if (error.Type == ErrorType.NotFound)
+                    return NotFound();
+
+                return Problem(title: error.Description, type: error.Code);
+            }
 
             return NoContent();
         }

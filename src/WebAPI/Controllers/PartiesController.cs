@@ -1,13 +1,11 @@
-﻿using UtterlyComplete.Domain.Core;
-using UtterlyComplete.ApplicationCore.Interfaces.Repositories;
-using UtterlyComplete.ApplicationCore.Models;
-using AutoMapper;
+﻿using UtterlyComplete.ApplicationCore.Models;
+using UtterlyComplete.ApplicationCore.Interfaces.Services;
 
 namespace WebAPI.Controllers
 {
-    public class PartiesController : BaseController<Party, PartyDto>
+    public class PartiesController : BaseController<PartyDto>
     {
-        public PartiesController(IMapper mapper, ICrudRepository<Party> repository) : base(mapper, repository)
+        public PartiesController(IService<PartyDto> service) : base(service)
         {
         }
     }
