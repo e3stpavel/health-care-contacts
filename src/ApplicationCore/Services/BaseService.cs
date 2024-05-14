@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ErrorOr;
+using UtterlyComplete.ApplicationCore.Errors;
 using UtterlyComplete.ApplicationCore.Interfaces.Repositories;
 using UtterlyComplete.ApplicationCore.Interfaces.Services;
 using UtterlyComplete.ApplicationCore.Models.Common;
@@ -25,9 +26,8 @@ namespace UtterlyComplete.ApplicationCore.Services
         {
             TEntity? entity = await _repository.FindByIdAsync(id);
 
-            // todo: https://github.com/amantinband/error-or?tab=readme-ov-file#organizing-errors
             if (entity == null)
-                return Error.NotFound(description: $"{nameof(TEntity)} was not found ('{id}')");
+                return UserErrors.EntityNotFound($"{typeof(TEntity).Name} was not found ('{id}')");
 
             return _mapper.Map<TDto>(entity);
         }
@@ -54,10 +54,10 @@ namespace UtterlyComplete.ApplicationCore.Services
             TEntity? entity = await _repository.FindByIdAsync(id);
 
             if (entity == null)
-                return Error.NotFound(description: $"{nameof(TEntity)} was not found ('{id}')");
+                return UserErrors.EntityNotFound($"{typeof(TEntity).Name} was not found ('{id}')");
 
             if (dto.Id != id)
-                return Error.Forbidden(description: $"You are not allowed to modify {nameof(TEntity)} id");
+                return UserErrors.IllegalOperation($"You are not allowed to modify {typeof(TEntity).Name} id");
 
             entity = _mapper.Map(dto, entity);
 
@@ -72,7 +72,7 @@ namespace UtterlyComplete.ApplicationCore.Services
             TEntity? entity = await _repository.FindByIdAsync(id);
 
             if (entity == null)
-                return Error.NotFound(description: $"{nameof(TEntity)} was not found ('{id}')");
+                return UserErrors.EntityNotFound($"{typeof(TEntity).Name} was not found ('{id}')");
 
             _repository.Remove(entity);
             await _repository.SaveAsync();

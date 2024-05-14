@@ -18,6 +18,22 @@ namespace WebAPI.Controllers
             _service = service;
         }
 
+        /// <returns>Erroneous ActionResult from supplied Error</returns>
+        protected ActionResult ErrorOf(Error error)
+        {
+            return error.Type switch
+            {
+                ErrorType.NotFound => NotFound(),
+                ErrorType.Forbidden => UnprocessableEntity(), // todo: maybe here should be forbidden
+                ErrorType.Unauthorized => Unauthorized(),
+                ErrorType.Validation => BadRequest(ModelState),
+                _ => Problem(
+                        type: error.Code,
+                        title: error.Description,
+                        detail: (error.Metadata?.TryGetValue("details", out object? details) ?? false) ? details.ToString() : null)
+            };
+        }
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IReadOnlyList<T>>> FindAll()
@@ -33,14 +49,7 @@ namespace WebAPI.Controllers
             ErrorOr<T> dtoOrError = await _service.GetByIdAsync(id);
 
             if (dtoOrError.IsError)
-            {
-                Error error = dtoOrError.FirstError;
-
-                if (error.Type == ErrorType.NotFound)
-                    return NotFound();
-
-                return Problem(title: error.Description, type: error.Code);
-            }
+                return ErrorOf(dtoOrError.FirstError);
 
             return dtoOrError.Value;
         }
@@ -74,16 +83,7 @@ namespace WebAPI.Controllers
             ErrorOr<T> dtoOrError = await _service.UpdateAsync(id, dto);
 
             if (dtoOrError.IsError)
-            {
-                Error error = dtoOrError.FirstError;
-
-                return error.Type switch
-                {
-                    ErrorType.NotFound => NotFound(),
-                    ErrorType.Forbidden => UnprocessableEntity(), // todo: think about proper code?
-                    _ => Problem(title: error.Description, type: error.Code)
-                };
-            }
+                return ErrorOf(dtoOrError.FirstError);
 
             return dtoOrError.Value;
         }
@@ -96,14 +96,7 @@ namespace WebAPI.Controllers
             ErrorOr<Deleted> deletedOrError = await _service.DeleteAsync(id);
 
             if (deletedOrError.IsError)
-            {
-                Error error = deletedOrError.FirstError;
-
-                if (error.Type == ErrorType.NotFound)
-                    return NotFound();
-
-                return Problem(title: error.Description, type: error.Code);
-            }
+                return ErrorOf(deletedOrError.FirstError);
 
             return NoContent();
         }
