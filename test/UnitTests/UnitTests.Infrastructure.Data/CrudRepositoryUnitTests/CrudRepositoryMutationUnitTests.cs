@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Moq;
 using UtterlyComplete.Domain.Common;
-using UtterlyComplete.Domain.Core;
-using UtterlyComplete.Domain.Facilities;
 using UtterlyComplete.Infrastructure.Data.Contexts;
 using UtterlyComplete.Infrastructure.Data.Repositories;
+using UnitTests.Infrastructure.Data.TestingUtils;
 
 namespace UnitTests.Infrastructure.Data.CrudRepositoryUnitTests
 {
@@ -29,21 +28,8 @@ namespace UnitTests.Infrastructure.Data.CrudRepositoryUnitTests
             _underTest = new CrudRepository<Entity>(mockContext.Object);
         }
 
-        public static IEnumerable<Entity[]> ShallowEntities
-        {
-            get
-            {
-                return
-                [
-                    [new Party() { Id = 1 }],
-                    [new Facility() { Id = 10 }],
-                    [new AmbulatorySurgeryCenter() { Id = 3 }]
-                ];
-            }
-        }
-
         [TestMethod]
-        [DynamicData(nameof(ShallowEntities))]
+        [DynamicData(nameof(ShallowEntities.AsDynamicData), typeof(ShallowEntities))]
         public async Task AddAsync_ShouldAddEntity(Entity entity)
         {
             List<Entity> entities = [];
@@ -64,7 +50,7 @@ namespace UnitTests.Infrastructure.Data.CrudRepositoryUnitTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(ShallowEntities))]
+        [DynamicData(nameof(ShallowEntities.AsDynamicData), typeof(ShallowEntities))]
         public void Update_ShouldUpdateEntity(Entity entity)
         {
             _mockDbSet
@@ -77,7 +63,7 @@ namespace UnitTests.Infrastructure.Data.CrudRepositoryUnitTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(ShallowEntities))]
+        [DynamicData(nameof(ShallowEntities.AsDynamicData), typeof(ShallowEntities))]
         public void Delete_ShouldDeleteEntity(Entity entity)
         {
             _mockDbSet

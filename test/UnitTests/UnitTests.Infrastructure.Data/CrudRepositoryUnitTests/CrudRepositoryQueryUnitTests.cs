@@ -2,9 +2,6 @@
 using Moq;
 using UnitTests.Infrastructure.Data.TestingUtils;
 using UtterlyComplete.Domain.Common;
-using UtterlyComplete.Domain.ContactMechanisms;
-using UtterlyComplete.Domain.Core;
-using UtterlyComplete.Domain.Facilities;
 using UtterlyComplete.Infrastructure.Data.Contexts;
 using UtterlyComplete.Infrastructure.Data.Repositories;
 
@@ -17,19 +14,12 @@ namespace UnitTests.Infrastructure.Data.CrudRepositoryUnitTests
 
         private readonly Mock<DbSet<Entity>> _mockDbSet;
 
-        private static readonly List<Entity> _shallowEntities =
-        [
-            new Party() { Id = 27 },
-            new Floor() { Id = 5 },
-            new ElectronicAddress() { Id = 1 }
-        ];
-
         public CrudRepositoryQueryUnitTests()
         {
             // mock DbSet `toListAsync()`
             //  https://stackoverflow.com/a/40491640
             Mock<DbSet<Entity>> mockSet = new();
-            IQueryable<Entity> entities = _shallowEntities.AsQueryable();
+            IQueryable<Entity> entities = ShallowEntities.AsQueryable;
 
             mockSet
                 .As<IAsyncEnumerable<Entity>>()
@@ -69,26 +59,27 @@ namespace UnitTests.Infrastructure.Data.CrudRepositoryUnitTests
         }
 
         [TestMethod]
-        [DataRow(1)]
-        [DataRow(5)]
-        [DataRow(27)]
-        public async Task FindByIdAsync_WhenId_ShouldReturnEntity(int entityId)
+        [DynamicData(nameof(ShallowEntities.AsDynamicData), typeof(ShallowEntities))]
+        public async Task FindByIdAsync_WhenId_ShouldReturnEntity(Entity entity)
         {
-            IEnumerable<int> entityIds = _shallowEntities.Select(e => e.Id);
+            int entityId = entity.Id;
+            List<Entity> shallowEntities = ShallowEntities.AsList;
+
+            IEnumerable<int> entityIds = shallowEntities.Select(e => e.Id);
 
             _mockDbSet
-                .Setup(set => set.FindAsync(new object[] { It.IsIn(entityIds) }))
+                .Setup(set => set.FindAsync(It.IsIn(entityIds)))
                 .ReturnsAsync((object[] keyValues) =>
                 {
                     int id = int.Parse(keyValues.ElementAt(0).ToString()!);
 
-                    return _shallowEntities.First(e => e.Id == id);
+                    return shallowEntities.First(e => e.Id == id && e.GetType() == entity.GetType());
                 });
 
             Entity? foundEntity = await _underTest.FindByIdAsync(entityId);
-            Entity entity = _shallowEntities.First(e => e.Id == entityId);
 
-            Assert.AreEqual(entity, foundEntity);
+            Assert.IsInstanceOfType(foundEntity, entity.GetType());
+            Assert.AreEqual(entity.Id, foundEntity.Id);
         }
 
         [TestMethod]
@@ -97,7 +88,7 @@ namespace UnitTests.Infrastructure.Data.CrudRepositoryUnitTests
         [DataRow(0)]
         public async Task FindByIdAsync_WhenIdIsNotInSet_ShouldBeNull(int entityId)
         {
-            IEnumerable<int> entityIds = _shallowEntities.Select(e => e.Id);
+            IEnumerable<int> entityIds = ShallowEntities.AsList.Select(e => e.Id);
 
             _mockDbSet
                 .Setup(set => set.FindAsync(It.IsNotIn(entityIds)))
@@ -113,7 +104,7 @@ namespace UnitTests.Infrastructure.Data.CrudRepositoryUnitTests
         {
             IReadOnlyList<Entity> foundEntities = await _underTest.FindAllAsync();
 
-            CollectionAssert.AreEqual(_shallowEntities, foundEntities.ToList());
+            CollectionAssert.AreEqual(ShallowEntities.AsList, foundEntities.ToList());
         }
     }
 }
