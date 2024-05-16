@@ -2,73 +2,91 @@
 using System.Net.Mime;
 using UtterlyComplete.Domain.Common;
 using UtterlyComplete.ApplicationCore.Interfaces.Repositories;
+using UtterlyComplete.ApplicationCore.Models.Common;
+using AutoMapper;
 
 namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BaseController<T> : ControllerBase where T : Entity
+    public class BaseController<TEntity, TDto> : ControllerBase
+        where TEntity : Entity
+        where TDto : EntityDto
     {
-        private readonly ICrudRepository<T> _repository;
+        private readonly IMapper _mapper;
 
-        public BaseController(ICrudRepository<T> repository)
+        private readonly ICrudRepository<TEntity> _repository;
+
+        public BaseController(IMapper mapper, ICrudRepository<TEntity> repository)
         {
+            _mapper = mapper;
             _repository = repository;
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<T>>> FindAll()
+        public async Task<ActionResult<List<TDto>>> FindAll()
         {
-            IReadOnlyList<T> entities = await _repository.FindAllAsync();
+            IReadOnlyList<TEntity> entities = await _repository.FindAllAsync();
 
-            return entities.ToList();
+            return _mapper.Map<List<TDto>>(entities);
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<T>> FindById(int id)
+        public async Task<ActionResult<TDto>> FindById(int id)
         {
-            T? entity = await _repository.FindByIdAsync(id);
+            TEntity? entity = await _repository.FindByIdAsync(id);
 
-            return entity == null ? NotFound() : entity;
+            if (entity == null)
+                return NotFound();
+
+            return _mapper.Map<TDto>(entity);
         }
 
         [HttpPost]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<T>> Create([FromBody] T entity)
+        public async Task<ActionResult<TDto>> Create([FromBody] TDto dto)
         {
             // todo: figure out the validation
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            TEntity entity = _mapper.Map<TEntity>(dto);
+
             entity = await _repository.AddAsync(entity);
             await _repository.SaveAsync();
 
-            return CreatedAtAction(nameof(Create), new { entity.Id }, entity);
+            dto = _mapper.Map<TDto>(entity);
+
+            return CreatedAtAction(nameof(Create), new { dto.Id }, dto);
         }
 
         [HttpPut("{id}")]
         [Consumes(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Update(int id, [FromBody] T entity)
+        public async Task<ActionResult<TDto>> Update(int id, [FromBody] TDto dto)
         {
-            // todo: make it better
-            if (id != entity.Id)
-                return NotFound();
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            TEntity? entity = await _repository.FindByIdAsync(id);
+
+            if (entity == null)
+                return NotFound();
+
+            // ignoring `id` being updated
+            entity = _mapper.Map(dto with { Id = entity.Id }, entity);
 
             _repository.Update(entity);
             await _repository.SaveAsync();
 
-            return NoContent();
+            return _mapper.Map<TDto>(entity);
         }
 
         [HttpDelete("{id}")]
@@ -76,7 +94,7 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Delete(int id)
         {
-            T? entity = await _repository.FindByIdAsync(id);
+            TEntity? entity = await _repository.FindByIdAsync(id);
 
             if (entity == null)
                 return NotFound();

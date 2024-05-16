@@ -1,12 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using UtterlyComplete.Domain.Common;
 
 namespace UtterlyComplete.Domain.Core
 {
-    public class Facility : Entity
+    public abstract class Facility : Entity
     {
         [Required]
         public string Description { get; set; } = null!;
+
+        [Column("Discriminator")]
+        public string Type { get; private set; } = null!;
 
         public int? SquareFootage { get; set; }
 

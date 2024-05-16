@@ -1,3 +1,4 @@
+using UtterlyComplete.ApplicationCore;
 using UtterlyComplete.Infrastructure.Data;
 
 namespace WebAPI
@@ -11,6 +12,7 @@ namespace WebAPI
             builder.Services
                 .AddDataAbstractionLayer(builder.Configuration)
                 .AddRepositories()
+                .AddMappers()
                 .AddControllers();
 
             var app = builder.Build();
