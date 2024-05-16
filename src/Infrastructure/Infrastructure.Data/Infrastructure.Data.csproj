@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\ApplicationCore\ApplicationCore.csproj" />
     <ProjectReference Include="..\..\Domain\Domain.csproj" />
+    <InternalsVisibleTo Include="UtterlyComplete.IntegrationTests.Infrastructure.Data"/>
   </ItemGroup>
 
 </Project>
