@@ -16,23 +16,21 @@ namespace UtterlyComplete.Infrastructure.Data.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // todo: probably there is a better way to declare entity subtypes
-
-            // register contact mechanisms
-            modelBuilder.Entity<PostalAddress>();
-            modelBuilder.Entity<TelecommunicationsNumber>();
-            modelBuilder.Entity<ElectronicAddress>();
-
-            // register facilities
-            modelBuilder.Entity<AmbulatorySurgeryCenter>();
-            modelBuilder.Entity<Clinic>();
-            modelBuilder.Entity<Floor>();
-            modelBuilder.Entity<Hospital>();
-            modelBuilder.Entity<MedicalBuilding>();
-            modelBuilder.Entity<MedicalOffice>();
-            modelBuilder.Entity<Room>();
+            RegisterEntityDerivedTypes<ContactMechanism, PostalAddress>(modelBuilder);
+            RegisterEntityDerivedTypes<Facility, AmbulatorySurgeryCenter>(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(PartyEntityTypeConfiguration).Assembly);
+        }
+
+        private static void RegisterEntityDerivedTypes<TBase, TDerived>(ModelBuilder modelBuilder)
+        {
+            Type someDerivedType = typeof(TDerived);
+
+            foreach (Type type in someDerivedType.Assembly.GetTypes()
+                .Where(t => t.Namespace == someDerivedType.Namespace && t.IsClass && t.IsSubclassOf(typeof(TBase))))
+            {
+                modelBuilder.Entity(type);
+            }
         }
     }
 }
