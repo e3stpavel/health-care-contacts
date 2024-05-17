@@ -1,11 +1,11 @@
-﻿using UtterlyComplete.Domain.Core;
-using UtterlyComplete.ApplicationCore.Interfaces.Repositories;
+﻿using UtterlyComplete.ApplicationCore.Models;
+using UtterlyComplete.ApplicationCore.Interfaces.Services;
 
 namespace WebAPI.Controllers
 {
-    public class PartiesController : BaseController<Party>
+    public class PartiesController : BaseController<PartyDto>
     {
-        public PartiesController(ICrudRepository<Party> repository) : base(repository)
+        public PartiesController(IService<PartyDto> service) : base(service)
         {
         }
     }

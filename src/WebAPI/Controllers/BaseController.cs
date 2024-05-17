@@ -1,28 +1,44 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
-using UtterlyComplete.Domain.Common;
-using UtterlyComplete.ApplicationCore.Interfaces.Repositories;
+using UtterlyComplete.ApplicationCore.Models.Common;
+using UtterlyComplete.ApplicationCore.Interfaces.Services;
+using ErrorOr;
 
 namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BaseController<T> : ControllerBase where T : Entity
+    public class BaseController<T> : ControllerBase
+        where T : EntityDto
     {
-        private readonly ICrudRepository<T> _repository;
+        private readonly IService<T> _service;
 
-        public BaseController(ICrudRepository<T> repository)
+        public BaseController(IService<T> service)
         {
-            _repository = repository;
+            _service = service;
+        }
+
+        /// <returns>Erroneous ActionResult from supplied Error</returns>
+        protected ActionResult ErrorOf(Error error)
+        {
+            return error.Type switch
+            {
+                ErrorType.NotFound => NotFound(),
+                ErrorType.Forbidden => UnprocessableEntity(), // todo: maybe here should be forbidden
+                ErrorType.Unauthorized => Unauthorized(),
+                ErrorType.Validation => BadRequest(ModelState),
+                _ => Problem(
+                        type: error.Code,
+                        title: error.Description,
+                        detail: (error.Metadata?.TryGetValue("details", out object? details) ?? false) ? details.ToString() : null)
+            };
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<T>>> FindAll()
+        public async Task<ActionResult<IReadOnlyList<T>>> FindAll()
         {
-            IReadOnlyList<T> entities = await _repository.FindAllAsync();
-
-            return entities.ToList();
+            return Ok(await _service.GetAllAsync());
         }
 
         [HttpGet("{id}")]
@@ -30,45 +46,46 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<T>> FindById(int id)
         {
-            T? entity = await _repository.FindByIdAsync(id);
+            ErrorOr<T> dtoOrError = await _service.GetByIdAsync(id);
 
-            return entity == null ? NotFound() : entity;
+            if (dtoOrError.IsError)
+                return ErrorOf(dtoOrError.FirstError);
+
+            return dtoOrError.Value;
         }
 
         [HttpPost]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<T>> Create([FromBody] T entity)
+        public async Task<ActionResult<T>> Create([FromBody] T dto)
         {
             // todo: figure out the validation
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            entity = await _repository.AddAsync(entity);
-            await _repository.SaveAsync();
+            dto = await _service.CreateAsync(dto);
 
-            return CreatedAtAction(nameof(Create), new { entity.Id }, entity);
+            return CreatedAtAction(nameof(Create), new { dto.Id }, dto);
         }
 
         [HttpPut("{id}")]
         [Consumes(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Update(int id, [FromBody] T entity)
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        public async Task<ActionResult<T>> Update(int id, [FromBody] T dto)
         {
-            // todo: make it better
-            if (id != entity.Id)
-                return NotFound();
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _repository.Update(entity);
-            await _repository.SaveAsync();
+            ErrorOr<T> dtoOrError = await _service.UpdateAsync(id, dto);
 
-            return NoContent();
+            if (dtoOrError.IsError)
+                return ErrorOf(dtoOrError.FirstError);
+
+            return dtoOrError.Value;
         }
 
         [HttpDelete("{id}")]
@@ -76,13 +93,10 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Delete(int id)
         {
-            T? entity = await _repository.FindByIdAsync(id);
+            ErrorOr<Deleted> deletedOrError = await _service.DeleteAsync(id);
 
-            if (entity == null)
-                return NotFound();
-
-            _repository.Remove(entity);
-            await _repository.SaveAsync();
+            if (deletedOrError.IsError)
+                return ErrorOf(deletedOrError.FirstError);
 
             return NoContent();
         }
