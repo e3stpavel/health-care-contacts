@@ -1,24 +1,17 @@
-using Microsoft.EntityFrameworkCore;
 using Moq;
-using UtterlyComplete.Infrastructure.Data.Contexts;
+using UnitTests.Infrastructure.Data.Common;
 using UtterlyComplete.Infrastructure.Data.Repositories;
 
 namespace UnitTests.Infrastructure.Data
 {
     [TestClass]
-    public class RepositoryUnitTests
+    public class RepositoryUnitTests : BaseRepositoryUnitTests
     {
         private readonly Repository _underTest;
 
-        private readonly Mock<ApplicationDbContext> _mockDbContext;
-
-        public RepositoryUnitTests()
+        public RepositoryUnitTests() : base()
         {
-            DbContextOptions<ApplicationDbContext> options = new();
-            Mock<ApplicationDbContext> mockContext = new(options);
-
-            _mockDbContext = mockContext;
-            _underTest = new Repository(mockContext.Object);
+            _underTest = new Repository(_mockDbContext.Object);
         }
 
         [TestMethod]
