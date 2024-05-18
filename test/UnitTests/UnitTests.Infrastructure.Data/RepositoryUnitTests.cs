@@ -1,8 +1,8 @@
 using Moq;
-using UnitTests.Infrastructure.Data.Common;
 using UtterlyComplete.Infrastructure.Data.Repositories;
+using UtterlyComplete.UnitTests.Infrastructure.Data.Common;
 
-namespace UnitTests.Infrastructure.Data
+namespace UtterlyComplete.UnitTests.Infrastructure.Data
 {
     [TestClass]
     public class RepositoryUnitTests : BaseRepositoryUnitTests

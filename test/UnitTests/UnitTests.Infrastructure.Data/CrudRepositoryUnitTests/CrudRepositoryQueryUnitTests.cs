@@ -1,9 +1,9 @@
 ﻿using Moq;
-using UnitTests.Infrastructure.Data.Common;
 using UtterlyComplete.Domain.Common;
 using UtterlyComplete.Infrastructure.Data.Repositories;
+using UtterlyComplete.UnitTests.Infrastructure.Data.Common;
 
-namespace UnitTests.Infrastructure.Data.CrudRepositoryUnitTests
+namespace UtterlyComplete.UnitTests.Infrastructure.Data.CrudRepositoryUnitTests
 {
     [TestClass]
     public class CrudRepositoryQueryUnitTests : BaseRepositoryUnitTests

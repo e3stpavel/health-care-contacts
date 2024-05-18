@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
-namespace UnitTests.Infrastructure.Data.Mocks
+namespace UtterlyComplete.UnitTests.Infrastructure.Data.Mocks
 {
     internal class MockAsyncQueryProvider<TEntity> : IAsyncQueryProvider
     {

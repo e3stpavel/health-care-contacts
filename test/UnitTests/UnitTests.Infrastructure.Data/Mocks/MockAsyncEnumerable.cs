@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace UnitTests.Infrastructure.Data.Mocks
+namespace UtterlyComplete.UnitTests.Infrastructure.Data.Mocks
 {
     internal class MockAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
     {

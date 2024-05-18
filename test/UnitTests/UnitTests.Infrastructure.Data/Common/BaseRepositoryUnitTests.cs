@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Moq;
-using UnitTests.Infrastructure.Data.Mocks;
 using UtterlyComplete.Domain.Common;
 using UtterlyComplete.Domain.ContactMechanisms;
 using UtterlyComplete.Domain.Core;
 using UtterlyComplete.Domain.Facilities;
 using UtterlyComplete.Infrastructure.Data.Contexts;
+using UtterlyComplete.UnitTests.Infrastructure.Data.Mocks;
 
-namespace UnitTests.Infrastructure.Data.Common
+namespace UtterlyComplete.UnitTests.Infrastructure.Data.Common
 {
     public class BaseRepositoryUnitTests
     {
@@ -64,7 +64,7 @@ namespace UnitTests.Infrastructure.Data.Common
             // mock context
             DbContextOptions<ApplicationDbContext> options = new();
             Mock<ApplicationDbContext> mockDbContext = new(options);
-            
+
             mockDbContext
                 .Setup(context => context.Set<Entity>())
                 .Returns(mockDbSet.Object);
