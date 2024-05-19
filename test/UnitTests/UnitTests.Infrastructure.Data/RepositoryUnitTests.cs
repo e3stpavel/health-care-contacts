@@ -9,7 +9,7 @@ namespace UtterlyComplete.UnitTests.Infrastructure.Data
     {
         private readonly Repository _underTest;
 
-        public RepositoryUnitTests() : base()
+        public RepositoryUnitTests()
         {
             _underTest = new Repository(_mockDbContext.Object);
         }

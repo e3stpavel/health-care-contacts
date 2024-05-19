@@ -10,7 +10,7 @@ namespace UtterlyComplete.UnitTests.Infrastructure.Data.CrudRepositoryUnitTests
     {
         private readonly CrudRepository<Entity> _underTest;
 
-        public CrudRepositoryQueryUnitTests() : base()
+        public CrudRepositoryQueryUnitTests()
         {
             _underTest = new CrudRepository<Entity>(_mockDbContext.Object);
         }
