@@ -6,13 +6,13 @@ using UtterlyComplete.Infrastructure.Data.Contexts;
 using UtterlyComplete.Infrastructure.Data.Repositories;
 using UtterlyComplete.IntegrationTests.Infrastructure.Data.Common;
 
-namespace IntegrationTests.Infrastructure.Data
+namespace UtterlyComplete.IntegrationTests.Infrastructure.Data
 {
     [TestClass]
     public class CrudRepositoryIntegrationTests : BaseRepositoryIntegrationTests
     {
         private readonly ApplicationDbContext _context;
-        
+
         private readonly CrudRepository<Hospital> _underTest;
 
         public CrudRepositoryIntegrationTests()
@@ -205,7 +205,7 @@ namespace IntegrationTests.Infrastructure.Data
         {
             Hospital hospital = await FindInitialFacility();
             hospital.Id = 2;
-            
+
             _underTest.Update(hospital);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
@@ -228,7 +228,7 @@ namespace IntegrationTests.Infrastructure.Data
         {
             Hospital hospital = ShallowFacility;
             hospital.Id = 2;
-            
+
             _underTest.Remove(hospital);
 
             await Assert.ThrowsExceptionAsync<DbUpdateConcurrencyException>(
@@ -240,7 +240,7 @@ namespace IntegrationTests.Infrastructure.Data
         {
             Hospital hospital = await FindInitialFacility();
             hospital.ContactMechanisms.Add(ShallowContactMechanism);
-            
+
             _context.Update(hospital);
             await _context.SaveChangesAsync();
 
