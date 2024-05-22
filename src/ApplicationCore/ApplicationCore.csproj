@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
+    <InternalsVisibleTo Include="UtterlyComplete.UnitTests.ApplicationCore"/>
   </ItemGroup>
 
 </Project>
