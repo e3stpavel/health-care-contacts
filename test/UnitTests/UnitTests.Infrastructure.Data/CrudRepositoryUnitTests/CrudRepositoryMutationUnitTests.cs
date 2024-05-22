@@ -1,35 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Moq;
+﻿using Moq;
 using UtterlyComplete.Domain.Common;
-using UtterlyComplete.Infrastructure.Data.Contexts;
 using UtterlyComplete.Infrastructure.Data.Repositories;
-using UnitTests.Infrastructure.Data.TestingUtils;
+using UtterlyComplete.UnitTests.Infrastructure.Data.Common;
 
-namespace UnitTests.Infrastructure.Data.CrudRepositoryUnitTests
+namespace UtterlyComplete.UnitTests.Infrastructure.Data.CrudRepositoryUnitTests
 {
     [TestClass]
-    public class CrudRepositoryMutationUnitTests
+    public class CrudRepositoryMutationUnitTests : BaseRepositoryUnitTests
     {
         private readonly CrudRepository<Entity> _underTest;
 
-        private readonly Mock<DbSet<Entity>> _mockDbSet;
-
         public CrudRepositoryMutationUnitTests()
         {
-            DbContextOptions<ApplicationDbContext> options = new();
-            Mock<DbSet<Entity>> mockSet = new();
-            Mock<ApplicationDbContext> mockContext = new(options);
-
-            mockContext
-                .Setup(context => context.Set<Entity>())
-                .Returns(mockSet.Object);
-
-            _mockDbSet = mockSet;
-            _underTest = new CrudRepository<Entity>(mockContext.Object);
+            _underTest = new CrudRepository<Entity>(_mockDbContext.Object);
         }
 
         [TestMethod]
-        [DynamicData(nameof(ShallowEntities.AsDynamicData), typeof(ShallowEntities))]
+        [DynamicData(nameof(ShallowEntitiesDynamicData), typeof(BaseRepositoryUnitTests))]
         public async Task AddAsync_ShouldAddEntity(Entity entity)
         {
             List<Entity> entities = [];
@@ -50,7 +37,7 @@ namespace UnitTests.Infrastructure.Data.CrudRepositoryUnitTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(ShallowEntities.AsDynamicData), typeof(ShallowEntities))]
+        [DynamicData(nameof(ShallowEntitiesDynamicData), typeof(BaseRepositoryUnitTests))]
         public void Update_ShouldUpdateEntity(Entity entity)
         {
             _mockDbSet
@@ -63,7 +50,7 @@ namespace UnitTests.Infrastructure.Data.CrudRepositoryUnitTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(ShallowEntities.AsDynamicData), typeof(ShallowEntities))]
+        [DynamicData(nameof(ShallowEntitiesDynamicData), typeof(BaseRepositoryUnitTests))]
         public void Delete_ShouldDeleteEntity(Entity entity)
         {
             _mockDbSet

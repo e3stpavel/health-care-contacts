@@ -1,25 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
-namespace UnitTests.Infrastructure.Data.TestingUtils
+namespace UtterlyComplete.UnitTests.Infrastructure.Data.Mocks
 {
-    internal class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider
+    internal class MockAsyncQueryProvider<TEntity> : IAsyncQueryProvider
     {
         private readonly IQueryProvider _inner;
 
-        internal TestAsyncQueryProvider(IQueryProvider inner)
+        internal MockAsyncQueryProvider(IQueryProvider inner)
         {
             _inner = inner;
         }
 
         public IQueryable CreateQuery(Expression expression)
         {
-            return new TestAsyncEnumerable<TEntity>(expression);
+            return new MockAsyncEnumerable<TEntity>(expression);
         }
 
         public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
         {
-            return new TestAsyncEnumerable<TElement>(expression);
+            return new MockAsyncEnumerable<TElement>(expression);
         }
 
         public object Execute(Expression expression)
@@ -34,7 +34,7 @@ namespace UnitTests.Infrastructure.Data.TestingUtils
 
         public IAsyncEnumerable<TResult> ExecuteAsync<TResult>(Expression expression)
         {
-            return new TestAsyncEnumerable<TResult>(expression);
+            return new MockAsyncEnumerable<TResult>(expression);
         }
 
         public Task<TResult> ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)

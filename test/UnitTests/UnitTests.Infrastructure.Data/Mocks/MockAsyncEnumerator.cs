@@ -1,10 +1,10 @@
-﻿namespace UnitTests.Infrastructure.Data.TestingUtils
+﻿namespace UtterlyComplete.UnitTests.Infrastructure.Data.Mocks
 {
-    internal class TestAsyncEnumerator<T> : IAsyncEnumerator<T>
+    internal class MockAsyncEnumerator<T> : IAsyncEnumerator<T>
     {
         private readonly IEnumerator<T> _inner;
 
-        public TestAsyncEnumerator(IEnumerator<T> inner)
+        public MockAsyncEnumerator(IEnumerator<T> inner)
         {
             _inner = inner;
         }
