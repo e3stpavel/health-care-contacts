@@ -4,7 +4,7 @@ using UtterlyComplete.Domain.Core;
 using UtterlyComplete.Domain.Facilities;
 using UtterlyComplete.UnitTests.ApplicationCore.Common;
 
-namespace UtterlyComplete.UnitTests.ApplicationCore
+namespace UtterlyComplete.UnitTests.ApplicationCore.Mappings
 {
     [TestClass]
     public class FacilityProfileUnitTests : BaseProfileUnitTests
@@ -14,7 +14,7 @@ namespace UtterlyComplete.UnitTests.ApplicationCore
         {
             // arrange
             FacilityType facilityType = new() { Id = 1, Description = "test type" };
-            
+
             List<Facility> facilities =
             [
                 new AmbulatorySurgeryCenter() { Id = 1 },

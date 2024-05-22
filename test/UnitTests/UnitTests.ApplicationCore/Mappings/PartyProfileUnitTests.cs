@@ -4,7 +4,7 @@ using UtterlyComplete.Domain.Core;
 using UtterlyComplete.Domain.Facilities;
 using UtterlyComplete.UnitTests.ApplicationCore.Common;
 
-namespace UtterlyComplete.UnitTests.ApplicationCore
+namespace UtterlyComplete.UnitTests.ApplicationCore.Mappings
 {
     [TestClass]
     public class PartyProfileUnitTests : BaseProfileUnitTests
