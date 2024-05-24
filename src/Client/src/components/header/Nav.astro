@@ -1,0 +1,19 @@
+---
+interface NavItem {
+  label: string
+  href: string
+}
+
+interface Props {
+  items: NavItem[]
+}
+
+---
+
+<nav class="hidden md:(flex gap-x-11 text-sm text-gray-900 font-medium leading-6 tracking-wide)">
+  {
+    Astro.props.items.map(({ label, href }) => (
+      <a class="hover:underline" href={href}>{ label }</a>
+    ))
+  }
+</nav>

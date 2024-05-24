@@ -13,7 +13,7 @@ export default defineConfig({
 
   integrations: [
     unocss({
-      injectReset: '@unocss/reset/tailwind-compat.css',
+      injectReset: true,
     }),
   ],
 })

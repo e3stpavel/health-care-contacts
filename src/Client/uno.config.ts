@@ -46,7 +46,7 @@ export default defineConfig<Theme>({
 
         *:focus-visible {
           outline-width: medium;
-          outline-offset: -2px;
+          outline-offset: -1px;
         }
       `,
     },

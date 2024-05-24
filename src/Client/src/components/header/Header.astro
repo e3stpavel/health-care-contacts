@@ -1,0 +1,33 @@
+---
+import { Image } from 'astro:assets'
+import Nav from './Nav.astro'
+import { Button, IconButton } from '~/components/button'
+import mark from '~/assets/wordmark.svg'
+
+const items = [
+  { label: 'Parties', href: '/parties' },
+  { label: 'Facilities', href: '/facilities' },
+]
+
+---
+
+<header class="h-16 flex border-b border-gray-900/10">
+  <div class="mx-auto max-w-7xl w-full flex items-center justify-between px-4 lg:px-8 sm:px-6">
+    <div class="flex flex-1 items-center">
+      <div class="md:hidden">
+        <IconButton as="button" type="button" icon="i-material-symbols-menu-rounded" label="Open main menu" />
+      </div>
+
+      <a href="/">
+        <Image src={mark} height="56" alt="Utterly Complete Health Care" />
+      </a>
+    </div>
+
+    <Nav items={items} />
+
+    <div class="flex flex-1 items-center justify-end gap-x-8">
+      <Button label="Star us" />
+    </div>
+  </div>
+  {/* TODO: mobile nav */}
+</header>
