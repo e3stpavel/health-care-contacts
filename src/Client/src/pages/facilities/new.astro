@@ -1,17 +1,17 @@
 ---
 import type { ZodFormattedError } from 'astro/zod'
 import ApplicationLayout from '~/layouts/ApplicationLayout.astro'
-import { type Facility, facilitySchema, facilityTypes } from '~/schemas/facility'
+import { type InsertFacility, facilityTypes, insertFacilitySchema } from '~/schemas/facility'
 import { errorSchema } from '~/schemas/error'
 
-let errors: ZodFormattedError<Facility> = { _errors: [] }
+let errors: ZodFormattedError<InsertFacility> = { _errors: [] }
 const request = Astro.request
 
 if (request.method === 'POST') {
   const formData = await request.formData()
   const data = Object.fromEntries(formData)
 
-  const facility = await facilitySchema.safeParseAsync(data)
+  const facility = await insertFacilitySchema.safeParseAsync(data)
 
   if (facility.success) {
     const response = await fetch(`${import.meta.env.API}/facilities`, {

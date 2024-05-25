@@ -1,0 +1,49 @@
+---
+import { z } from 'astro/zod'
+import ApplicationLayout from '~/layouts/ApplicationLayout.astro'
+import { selectFacilitySchema } from '~/schemas/facility'
+
+const response = await fetch(`${import.meta.env.API}/facilities`, {
+  headers: {
+    Accept: 'application/json',
+  },
+})
+
+const data = await response.json()
+const facilities = await z.array(selectFacilitySchema).safeParseAsync(data)
+
+if (!facilities.success)
+  throw new Error('Inconsistent data')
+
+---
+
+<ApplicationLayout>
+  <table>
+    <thead>
+      <tr>
+        <td>Description</td>
+        <td>Type</td>
+        <td>Type Description</td>
+        <td>Contacts</td>
+        <td>Actions</td>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        facilities.data.map(facility => (
+          <tr>
+            <td>{ facility.description }</td>
+            <td class="capitalize">
+              { facility.type.replace(/([a-z])([A-Z])/g, '$1 $2') }
+            </td>
+            <td>{ facility.facilityTypeDescription }</td>
+            <td>{ facility.contacts.length }</td>
+            <td>
+              <a href={`/facilities/${facility.id}`}>Edit</a>
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</ApplicationLayout>

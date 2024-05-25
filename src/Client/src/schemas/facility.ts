@@ -11,14 +11,19 @@ export const facilityTypes = [
   'room',
 ] as const
 
-export const facilitySchema = z.object({
+export const selectFacilitySchema = z.object({
+  id: z.number().positive(),
   description: z.string().min(3),
   type: z.enum(facilityTypes),
 
-  // TODO: kinda problem spot
+  // TODO: right now every time it is submitted, new facility type is created
   facilityTypeDescription: z.string(),
 
   contacts: contactsSchema.default([]),
 })
 
-export type Facility = z.infer<typeof facilitySchema>
+export type SelectFacility = z.infer<typeof selectFacilitySchema>
+
+export const insertFacilitySchema = selectFacilitySchema.omit({ id: true })
+
+export type InsertFacility = z.infer<typeof insertFacilitySchema>
