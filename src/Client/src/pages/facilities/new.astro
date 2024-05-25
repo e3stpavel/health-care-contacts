@@ -1,0 +1,87 @@
+---
+import type { ZodFormattedError } from 'astro/zod'
+import ApplicationLayout from '~/layouts/ApplicationLayout.astro'
+import { type Facility, facilitySchema, facilityTypes } from '~/schemas/facility'
+import { errorSchema } from '~/schemas/error'
+
+let errors: ZodFormattedError<Facility> = { _errors: [] }
+const request = Astro.request
+
+if (request.method === 'POST') {
+  const formData = await request.formData()
+  const data = Object.fromEntries(formData)
+
+  const facility = await facilitySchema.safeParseAsync(data)
+
+  if (facility.success) {
+    const response = await fetch(`${import.meta.env.API}/facilities`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(facility.data),
+    })
+
+    if (response.ok)
+      return Astro.redirect('/facilities')
+
+    const data = await response.json()
+    const problem = await errorSchema.safeParseAsync(data)
+
+    if (problem.success)
+      errors._errors.push(problem.data.title)
+    else
+      errors._errors.push('Failed to save facility. Try again later')
+  }
+  else {
+    errors = facility.error.format()
+  }
+}
+
+---
+
+<ApplicationLayout>
+  <form method="post">
+    <div class="flex flex-col children:border-2">
+      <label for="description">Description</label>
+      <input type="text" name="description" id="description" value="test" required />
+      { errors.description && <p class="text-red-600">{ errors.description._errors.at(0) }</p> }
+    </div>
+
+    <div class="flex flex-col children:border-2">
+      <label for="type">Type</label>
+      <select name="type" id="type">
+        {
+          facilityTypes.map(type => (
+            <option>{ type }</option>
+          ))
+        }
+      </select>
+      { errors.type && <p class="text-red-600">{ errors.type._errors.at(0) }</p> }
+    </div>
+
+    <div class="flex flex-col children:border-2">
+      <label for="typeDescription">Facility type description</label>
+      <input
+        type="text"
+        list="facilityTypeDescriptions"
+        name="facilityTypeDescription"
+        id="typeDescription"
+        value="test"
+        required
+      />
+      { errors.facilityTypeDescription && <p class="text-red-600">{ errors.facilityTypeDescription._errors.at(0) }</p> }
+
+      <datalist id="facilityTypeDescriptions">
+        {/* TODO: fetch from api */}
+        <option value="test"></option>
+        <option value="test2"></option>
+      </datalist>
+    </div>
+
+    <button type="submit">Save</button>
+  </form>
+
+  { JSON.stringify(errors) }
+</ApplicationLayout>

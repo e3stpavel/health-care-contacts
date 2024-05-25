@@ -23,7 +23,7 @@ type Props<Tag extends AsProps['as'] = 'button' | 'a'> = Polymorphic<{
 const { as: Tag, label, icon, size = 'md', ...attrs } = Astro.props
 ---
 
-<Tag type="button" class="inline-flex items-center justify-center rounded-md p-2 -mx-2 hover:(bg-gray-100 text-gray-700) focus-visible:(outline-none ring-2 ring-rose-500 ring-inset)" aria-expanded="false" {...attrs as any}>
+<Tag type="button" class="inline-flex items-center justify-center border border-transparent rounded-md p-1.5 -mx-1.5 hover:(bg-gray-100 text-gray-700) focus-visible:(outline-none ring-2 ring-rose-500 ring-inset)" aria-expanded="false" {...attrs as any}>
   <span class="sr-only">{label}</span>
   <span
     class:list={[
@@ -34,5 +34,6 @@ const { as: Tag, label, icon, size = 'md', ...attrs } = Astro.props
         'size-6': size === 'md',
       },
     ]}
+    aria-hidden="true"
   />
 </Tag>
