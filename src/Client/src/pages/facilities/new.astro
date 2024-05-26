@@ -2,41 +2,25 @@
 import type { ZodFormattedError } from 'astro/zod'
 import ApplicationLayout from '~/layouts/ApplicationLayout.astro'
 import { type InsertFacility, facilityTypes, insertFacilitySchema } from '~/schemas/facility'
-import { errorSchema } from '~/schemas/error'
+import facilityService from '~/services/facility'
 
-let errors: ZodFormattedError<InsertFacility> = { _errors: [] }
-const request = Astro.request
+let errors: ZodFormattedError<InsertFacility> | undefined
 
-if (request.method === 'POST') {
-  const formData = await request.formData()
-  const data = Object.fromEntries(formData)
-
+if (Astro.request.method === 'POST') {
+  const data = Object.fromEntries(
+    await Astro.request.formData(),
+  )
   const facility = await insertFacilitySchema.safeParseAsync(data)
 
   if (facility.success) {
-    const response = await fetch(`${import.meta.env.API}/facilities`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(facility.data),
-    })
+    const response = await facilityService.add(facility.data)
 
     if (response.ok)
       return Astro.redirect('/facilities')
 
-    const data = await response.json()
-    const problem = await errorSchema.safeParseAsync(data)
-
-    if (problem.success)
-      errors._errors.push(problem.data.title)
-    else
-      errors._errors.push('Failed to save facility. Try again later')
+    errors = { _errors: [response.error.title] }
   }
-  else {
-    errors = facility.error.format()
-  }
+  else { errors = facility.error.format() }
 }
 
 ---
@@ -46,7 +30,7 @@ if (request.method === 'POST') {
     <div class="flex flex-col children:border-2">
       <label for="description">Description</label>
       <input type="text" name="description" id="description" value="test" required />
-      { errors.description && <p class="text-red-600">{ errors.description._errors.at(0) }</p> }
+      { errors?.description && <p class="text-red-600">{ errors.description._errors.at(0) }</p> }
     </div>
 
     <div class="flex flex-col children:border-2">
@@ -58,7 +42,7 @@ if (request.method === 'POST') {
           ))
         }
       </select>
-      { errors.type && <p class="text-red-600">{ errors.type._errors.at(0) }</p> }
+      { errors?.type && <p class="text-red-600">{ errors.type._errors.at(0) }</p> }
     </div>
 
     <div class="flex flex-col children:border-2">
@@ -71,7 +55,7 @@ if (request.method === 'POST') {
         value="test"
         required
       />
-      { errors.facilityTypeDescription && <p class="text-red-600">{ errors.facilityTypeDescription._errors.at(0) }</p> }
+      { errors?.facilityTypeDescription && <p class="text-red-600">{ errors.facilityTypeDescription._errors.at(0) }</p> }
 
       <datalist id="facilityTypeDescriptions">
         {/* TODO: fetch from api */}

@@ -1,19 +1,13 @@
 ---
-import { z } from 'astro/zod'
 import ApplicationLayout from '~/layouts/ApplicationLayout.astro'
-import { selectFacilitySchema } from '~/schemas/facility'
+import facilityService from '~/services/facility'
 
-const response = await fetch(`${import.meta.env.API}/facilities`, {
-  headers: {
-    Accept: 'application/json',
-  },
-})
+const response = await facilityService.findAll()
 
-const data = await response.json()
-const facilities = await z.array(selectFacilitySchema).safeParseAsync(data)
-
-if (!facilities.success)
+if (!response.ok)
   throw new Error('Inconsistent data')
+
+const facilities = response.data
 
 ---
 
@@ -30,7 +24,7 @@ if (!facilities.success)
     </thead>
     <tbody>
       {
-        facilities.data.map(facility => (
+        facilities.map(facility => (
           <tr>
             <td>{ facility.description }</td>
             <td class="capitalize">

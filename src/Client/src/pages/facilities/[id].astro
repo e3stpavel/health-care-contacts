@@ -1,35 +1,32 @@
 ---
+import type { z } from 'astro/zod'
 import ApplicationLayout from '~/layouts/ApplicationLayout.astro'
-import { facilityTypes, selectFacilitySchema } from '~/schemas/facility'
+import { type SelectFacility, facilityTypes, selectFacilitySchema } from '~/schemas/facility'
 import facilityService from '~/services/facility'
 
 const id = Astro.params.id
-const request = Astro.request
+let response = await facilityService.findOne(+id!)
+let errors: z.ZodFormattedError<SelectFacility> | undefined
 
-if (!id)
-  return Astro.redirect('/404')
+if (Astro.request.method === 'POST') {
+  const data = Object.fromEntries(
+    await Astro.request.formData(),
+  )
+  const updatedFacility = await selectFacilitySchema.safeParseAsync(data)
 
-let response: Awaited<ReturnType<typeof facilityService.findOne>> | undefined
-
-if (request.method === 'GET') {
-  response = await facilityService.findOne(+id)
+  if (updatedFacility.success)
+    response = await facilityService.update(+id!, updatedFacility.data)
+  else
+    errors = updatedFacility.error.format()
 }
-else if (request.method === 'POST') {
-  // TODO: try catch and handle validation errors
-  const data = Object.fromEntries(await request.formData())
-  const updateFacility = await selectFacilitySchema.parseAsync(data)
-
-  response = await facilityService.update(+id, updateFacility)
-}
-
-if (!response)
-  throw new Error('Unexpected error')
 
 if (!response.ok) {
-  if (response.error.status === 404)
+  const { status, title } = response.error
+
+  if (status === 404)
     return Astro.redirect('/404')
 
-  throw new Error(response.error.title)
+  throw new Error(title)
 }
 
 const facility = response.data
@@ -84,6 +81,7 @@ const facility = response.data
 
     <div>
       { JSON.stringify(facility.contacts) }
+      { JSON.stringify(errors) }
     </div>
 
     <button type="submit">Save</button>
