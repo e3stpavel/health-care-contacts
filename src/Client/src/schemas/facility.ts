@@ -12,7 +12,7 @@ export const facilityTypes = [
 ] as const
 
 export const selectFacilitySchema = z.object({
-  id: z.number().positive(),
+  id: z.coerce.number().positive(),
   description: z.string().min(3),
   type: z.enum(facilityTypes),
 

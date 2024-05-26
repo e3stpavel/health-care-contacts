@@ -1,0 +1,91 @@
+---
+import ApplicationLayout from '~/layouts/ApplicationLayout.astro'
+import { facilityTypes, selectFacilitySchema } from '~/schemas/facility'
+import facilityService from '~/services/facility'
+
+const id = Astro.params.id
+const request = Astro.request
+
+if (!id)
+  return Astro.redirect('/404')
+
+let response: Awaited<ReturnType<typeof facilityService.findOne>> | undefined
+
+if (request.method === 'GET') {
+  response = await facilityService.findOne(+id)
+}
+else if (request.method === 'POST') {
+  // TODO: try catch and handle validation errors
+  const data = Object.fromEntries(await request.formData())
+  const updateFacility = await selectFacilitySchema.parseAsync(data)
+
+  response = await facilityService.update(+id, updateFacility)
+}
+
+if (!response)
+  throw new Error('Unexpected error')
+
+if (!response.ok) {
+  if (response.error.status === 404)
+    return Astro.redirect('/404')
+
+  throw new Error(response.error.title)
+}
+
+const facility = response.data
+
+---
+
+<ApplicationLayout>
+  <form method="post">
+    <div>
+      <input type="hidden" name="id" value={facility.id} />
+    </div>
+
+    <div>
+      <label for="description">Description</label>
+      <input
+        type="text"
+        value={facility.description}
+        name="description"
+        id="description"
+      />
+    </div>
+
+    <div>
+      {/* TODO: we cannot edit type */}
+      <label for="type">Type</label>
+      <select name="type" id="type">
+        {
+          facilityTypes.map(type => (
+            <option {...(facility.type === type ? { selected: true } : {})}>{ type }</option>
+          ))
+        }
+      </select>
+    </div>
+
+    <div>
+      <label for="typeDescription">Facility type description</label>
+      <input
+        type="text"
+        list="facilityTypeDescriptions"
+        name="facilityTypeDescription"
+        id="typeDescription"
+        value={facility.facilityTypeDescription}
+        required
+      />
+
+      <datalist id="facilityTypeDescriptions">
+        {/* TODO: fetch from api */}
+        <option value="test"></option>
+        <option value="test2"></option>
+      </datalist>
+    </div>
+
+    <div>
+      { JSON.stringify(facility.contacts) }
+    </div>
+
+    <button type="submit">Save</button>
+  </form>
+</ApplicationLayout>
