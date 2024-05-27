@@ -17,13 +17,15 @@ export const selectFacilitySchema = z.object({
   type: z.enum(facilityTypes),
 
   // TODO: right now every time it is submitted, new facility type is created
-  facilityTypeDescription: z.string(),
+  facilityTypeDescription: z.string().min(5),
 
+  squareFootage: z.number().positive().max(1000).optional(),
+  // partOfFacility: z.lazy(() => selectFacilitySchema),
   contacts: contactsSchema.default([]),
 })
 
-export type SelectFacility = z.infer<typeof selectFacilitySchema>
+export type Facility = z.infer<typeof selectFacilitySchema>
 
 export const insertFacilitySchema = selectFacilitySchema.omit({ id: true })
 
-export type InsertFacility = z.infer<typeof insertFacilitySchema>
+export type NewFacility = z.infer<typeof insertFacilitySchema>

@@ -1,89 +1,65 @@
 ---
-import type { z } from 'astro/zod'
 import ApplicationLayout from '~/layouts/ApplicationLayout.astro'
-import { type SelectFacility, facilityTypes, selectFacilitySchema } from '~/schemas/facility'
-import facilityService from '~/services/facility'
+import { type Facility, selectFacilitySchema } from '~/schemas/facility'
 
-const id = Astro.params.id
-let response = await facilityService.findOne(+id!)
-let errors: z.ZodFormattedError<SelectFacility> | undefined
+const { id } = Astro.params
+
+let response, facility, errors
 
 if (Astro.request.method === 'POST') {
-  const data = Object.fromEntries(
-    await Astro.request.formData(),
-  )
-  const updatedFacility = await selectFacilitySchema.safeParseAsync(data)
+  const formData = await Astro.request.formData()
+  const data = Object.fromEntries(formData)
 
-  if (updatedFacility.success)
-    response = await facilityService.update(+id!, updatedFacility.data)
-  else
-    errors = updatedFacility.error.format()
+  const validation = selectFacilitySchema.safeParse(data)
+
+  if (!validation.success) {
+    facility = data as unknown as Facility
+    errors = validation.error.format()
+  }
+  else {
+    response = await fetch(`${import.meta.env.API}/facilities/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(validation.data),
+    })
+  }
+}
+else {
+  response = await fetch(`${import.meta.env.API}/facilities/${id}`)
 }
 
-if (!response.ok) {
-  const { status, title } = response.error
+if (response) {
+  if (!response.ok) {
+    if (response.status === 404)
+      return Astro.redirect('/404')
 
-  if (status === 404)
-    return Astro.redirect('/404')
+    throw new Error(`Request failed with status ${response.status}`)
+  }
 
-  throw new Error(title)
+  // either redirect to list
+  // if (Astro.request.method === 'POST')
+  //   return Astro.redirect('/facilities')
+
+  facility = await response.json() as Facility
 }
-
-const facility = response.data
 
 ---
 
 <ApplicationLayout>
+  {/* or write success message */}
+  {Astro.request.method === 'POST' && response?.ok && <div>Updated</div>}
   <form method="post">
+    <input type="hidden" name="id" value={facility?.id} />
     <div>
-      <input type="hidden" name="id" value={facility.id} />
+      <label for="description">description</label>
+      <input type="text" name="description" id="description" value={facility?.description} />
+      {errors?.description?._errors.at(0)}
     </div>
 
-    <div>
-      <label for="description">Description</label>
-      <input
-        type="text"
-        value={facility.description}
-        name="description"
-        id="description"
-      />
-    </div>
-
-    <div>
-      {/* TODO: we cannot edit type */}
-      <label for="type">Type</label>
-      <select name="type" id="type">
-        {
-          facilityTypes.map(type => (
-            <option {...(facility.type === type ? { selected: true } : {})}>{ type }</option>
-          ))
-        }
-      </select>
-    </div>
-
-    <div>
-      <label for="typeDescription">Facility type description</label>
-      <input
-        type="text"
-        list="facilityTypeDescriptions"
-        name="facilityTypeDescription"
-        id="typeDescription"
-        value={facility.facilityTypeDescription}
-        required
-      />
-
-      <datalist id="facilityTypeDescriptions">
-        {/* TODO: fetch from api */}
-        <option value="test"></option>
-        <option value="test2"></option>
-      </datalist>
-    </div>
-
-    <div>
-      { JSON.stringify(facility.contacts) }
-      { JSON.stringify(errors) }
-    </div>
+    <input type="hidden" name="type" value={facility?.type} />
+    <input type="text" name="facilityTypeDescription" value={facility?.facilityTypeDescription} />
 
     <button type="submit">Save</button>
+    <p>{ JSON.stringify(errors) }</p>
   </form>
 </ApplicationLayout>

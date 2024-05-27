@@ -1,13 +1,13 @@
 ---
 import ApplicationLayout from '~/layouts/ApplicationLayout.astro'
-import facilityService from '~/services/facility'
+import type { Facility } from '~/schemas/facility'
 
-const response = await facilityService.findAll()
+const response = await fetch(`${import.meta.env.API}/facilities`)
 
 if (!response.ok)
-  throw new Error('Inconsistent data')
+  throw new Error(`Request failed with status ${response.status}`)
 
-const facilities = response.data
+const facilities = await response.json() as Array<Facility>
 
 ---
 

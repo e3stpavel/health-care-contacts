@@ -1,26 +1,30 @@
 ---
-import type { ZodFormattedError } from 'astro/zod'
 import ApplicationLayout from '~/layouts/ApplicationLayout.astro'
-import { type InsertFacility, facilityTypes, insertFacilitySchema } from '~/schemas/facility'
-import facilityService from '~/services/facility'
+import { type Facility, facilityTypes, insertFacilitySchema } from '~/schemas/facility'
 
-let errors: ZodFormattedError<InsertFacility> | undefined
+let errors
 
 if (Astro.request.method === 'POST') {
-  const data = Object.fromEntries(
-    await Astro.request.formData(),
-  )
-  const facility = await insertFacilitySchema.safeParseAsync(data)
+  const formData = await Astro.request.formData()
+  const data = Object.fromEntries(formData)
 
-  if (facility.success) {
-    const response = await facilityService.add(facility.data)
+  const validation = insertFacilitySchema.safeParse(data)
 
-    if (response.ok)
-      return Astro.redirect('/facilities')
+  if (validation.success) {
+    const response = await fetch(`${import.meta.env.API}/facilities`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(validation.data),
+    })
 
-    errors = { _errors: [response.error.title] }
+    if (!response.ok)
+      throw new Error(`Request failed with status ${response.status}`)
+
+    const { id } = await response.json() as Facility
+    return Astro.redirect(`/facilities/${id}`)
   }
-  else { errors = facility.error.format() }
+
+  errors = validation.error.format()
 }
 
 ---
@@ -30,7 +34,7 @@ if (Astro.request.method === 'POST') {
     <div class="flex flex-col children:border-2">
       <label for="description">Description</label>
       <input type="text" name="description" id="description" value="test" required />
-      { errors?.description && <p class="text-red-600">{ errors.description._errors.at(0) }</p> }
+      <p class="text-red-600">{ errors?.description?._errors.at(0) }</p>
     </div>
 
     <div class="flex flex-col children:border-2">
@@ -42,7 +46,7 @@ if (Astro.request.method === 'POST') {
           ))
         }
       </select>
-      { errors?.type && <p class="text-red-600">{ errors.type._errors.at(0) }</p> }
+      <p class="text-red-600">{ errors?.type?._errors.at(0) }</p>
     </div>
 
     <div class="flex flex-col children:border-2">
@@ -55,7 +59,7 @@ if (Astro.request.method === 'POST') {
         value="test"
         required
       />
-      { errors?.facilityTypeDescription && <p class="text-red-600">{ errors.facilityTypeDescription._errors.at(0) }</p> }
+      <p class="text-red-600">{ errors?.facilityTypeDescription?._errors.at(0) }</p>
 
       <datalist id="facilityTypeDescriptions">
         {/* TODO: fetch from api */}
