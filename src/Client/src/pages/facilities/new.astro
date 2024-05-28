@@ -1,4 +1,8 @@
 ---
+import PageHeading from '~/components/page/PageHeading.astro'
+import PageShell from '~/components/page/PageShell.html'
+import { Button } from '~/components/button'
+import { Input, Select } from '~/components/form'
 import ApplicationLayout from '~/layouts/ApplicationLayout.astro'
 import { type Facility, facilityTypes, insertFacilitySchema } from '~/schemas/facility'
 
@@ -30,46 +34,87 @@ if (Astro.request.method === 'POST') {
 ---
 
 <ApplicationLayout>
-  <form method="post">
-    <div class="flex flex-col children:border-2">
-      <label for="description">Description</label>
-      <input type="text" name="description" id="description" value="test" required />
-      <p class="text-red-600">{ errors?.description?._errors.at(0) }</p>
-    </div>
+  <PageHeading
+    title="Facility"
+    trailingLabel="Create new facility and save it to the database"
+  />
 
-    <div class="flex flex-col children:border-2">
-      <label for="type">Type</label>
-      <select name="type" id="type">
-        {
-          facilityTypes.map(type => (
-            <option>{ type }</option>
-          ))
-        }
-      </select>
-      <p class="text-red-600">{ errors?.type?._errors.at(0) }</p>
-    </div>
+  <PageShell>
+    <form method="post">
+      <div class="space-y-12">
+        <div class="border-b border-gray-900/10 pb-12">
+          <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div class="sm:col-span-3">
+              <Input
+                label="Description"
+                name="description"
+                type="text"
+                required
+                errors={errors?.description?._errors}
+              />
+            </div>
+            <div class="sm:col-span-3">
+              <Select label="Type" name="type">
+                {
+                  facilityTypes.map(type => (
+                    <option>{ type }</option>
+                  ))
+                }
+              </Select>
+            </div>
 
-    <div class="flex flex-col children:border-2">
-      <label for="typeDescription">Facility type description</label>
-      <input
-        type="text"
-        list="facilityTypeDescriptions"
-        name="facilityTypeDescription"
-        id="typeDescription"
-        value="test"
-        required
-      />
-      <p class="text-red-600">{ errors?.facilityTypeDescription?._errors.at(0) }</p>
+            <div class="sm:col-span-4">
+              <Input
+                label="Facility Type Description"
+                name="facilityTypeDescription"
+                type="text"
+                required
+                list="facilityTypeDescriptionList"
+                errors={errors?.facilityTypeDescription?._errors}
+              />
+              <!-- <datalist id="facilityTypeDescriptionList">
+                {/* TODO: fetch facility types from api */}
+                <option value="test"></option>
+                <option value="test2"></option>
+              </datalist> -->
+            </div>
+            <div class="sm:col-span-2">
+              <Input
+                label="Square Footage"
+                name="squareFootage"
+                type="number"
+                min="0"
+                max="1000"
+                optional
+                errors={errors?.squareFootage?._errors}
+              />
+            </div>
+          </div>
+        </div>
 
-      <datalist id="facilityTypeDescriptions">
-        {/* TODO: fetch from api */}
-        <option value="test"></option>
-        <option value="test2"></option>
-      </datalist>
-    </div>
+        {/* TODO: contacts section */}
+        <!-- <div class="border-b border-gray-900/10 pb-12">
+          <h2 class="text-base text-gray-900 font-semibold leading-7">Personal Information</h2>
+          <p class="mt-1 text-sm text-gray-600 leading-6">Use a permanent address where you can receive mail.</p>
 
-    <button type="submit">Save</button>
-  </form>
+          <div class="grid grid-cols-1 mt-10 gap-x-6 gap-y-8 sm:grid-cols-6">
+          </div>
+        </div> -->
+      </div>
 
-  { JSON.stringify(errors) }
+      <div class="mt-6 flex items-center justify-end gap-x-2">
+        <Button
+          as="a"
+          href="/facilities"
+          label="Cancel"
+          style="secondary"
+        />
+        <Button
+          as="button"
+          type="submit"
+          label="Save"
+        />
+      </div>
+    </form>
+  </PageShell>
 </ApplicationLayout>

@@ -1,0 +1,41 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+import { type Style, labelStyles } from './common'
+
+interface Props extends HTMLAttributes<'select'> {
+  label: string
+  name: string
+  style?: Style
+}
+
+const { label, name, style = 'default', ...attrs } = Astro.props
+
+const styles = {
+  'pl-3 pr-10 ring-1 ring-gray-300 ring-inset': style === 'default',
+  'px-2 -mx-3 hover:bg-gray-50 focus:bg-gray-50': style === 'ghost',
+}
+
+---
+
+<div>
+  <label
+    for={name}
+    class:list={[
+      'block text-sm leading-6 tracking-wide',
+      labelStyles(style),
+    ]}
+  >
+    { label }
+  </label>
+  <select
+    id={name}
+    name={name}
+    class:list={[
+      'mt-2 block h-9 w-full border-0 rounded-md py-1.5 text-gray-900 tracking-wide sm:text-sm',
+      styles,
+    ]}
+    {...attrs}
+  >
+    <slot />
+  </select>
+</div>

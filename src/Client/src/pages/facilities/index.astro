@@ -1,4 +1,8 @@
 ---
+import PageHeading from '~/components/page/PageHeading.astro'
+import Table from '~/components/table/Table.html'
+import { DataCell, HeaderCell } from '~/components/table'
+import { Button } from '~/components/button'
 import ApplicationLayout from '~/layouts/ApplicationLayout.astro'
 import type { Facility } from '~/schemas/facility'
 
@@ -12,32 +16,74 @@ const facilities = await response.json() as Array<Facility>
 ---
 
 <ApplicationLayout>
-  <table>
-    <thead>
-      <tr>
-        <td>Description</td>
-        <td>Type</td>
-        <td>Type Description</td>
-        <td>Contacts</td>
-        <td>Actions</td>
-      </tr>
-    </thead>
-    <tbody>
-      {
-        facilities.map(facility => (
+  <PageHeading
+    title="Discover"
+    trailingLabel="The entire list of facilities is at your fingertips"
+  >
+    <Button
+      as="a"
+      href="/facilities/new"
+      label="Add new"
+      leadingIcon="i-material-symbols-add-rounded"
+    />
+  </PageHeading>
+
+  <div class="mx-auto max-w-7xl px-4 lg:px-8 sm:px-6">
+    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 -mx-4 md:(mx-0 rounded-lg) sm:-mx-6">
+      <Table>
+        <Fragment slot="header">
           <tr>
-            <td>{ facility.description }</td>
-            <td class="capitalize">
-              { facility.type.replace(/([a-z])([A-Z])/g, '$1 $2') }
-            </td>
-            <td>{ facility.facilityTypeDescription }</td>
-            <td>{ facility.contacts.length }</td>
-            <td>
-              <a href={`/facilities/${facility.id}`}>Edit</a>
-            </td>
+            <HeaderCell>Id</HeaderCell>
+            <HeaderCell>Description</HeaderCell>
+            <HeaderCell
+              suppressOnMobile
+              breakpoint="sm"
+            >
+              Type
+            </HeaderCell>
+            <HeaderCell
+              suppressOnMobile
+              breakpoint="lg"
+            >
+              Type Description
+            </HeaderCell>
+            <HeaderCell>
+              <span class="sr-only">Actions</span>
+            </HeaderCell>
           </tr>
-        ))
-      }
-    </tbody>
-  </table>
+        </Fragment>
+        <Fragment slot="body">
+          {
+            facilities.map(facility => (
+              <tr class="relative hover:bg-gray-50">
+                <DataCell formatNumbers>{ facility.id }</DataCell>
+                <DataCell emphasis="high">{ facility.description }</DataCell>
+                <DataCell
+                  suppressOnMobile
+                  breakpoint="sm"
+                >
+                  <span class="capitalize">
+                    { facility.type.replace(/([a-z])([A-Z])/g, '$1 $2') }
+                  </span>
+                </DataCell>
+                <DataCell
+                  suppressOnMobile
+                  breakpoint="lg"
+                  emphasis="low"
+                >
+                  { facility.facilityTypeDescription }
+                </DataCell>
+                <DataCell>
+                  <a class="text-brand-blue-700 hover:underline" href={`/facilities/${facility.id}`}>
+                    <span class="absolute inset-0" aria-hidden="true" />
+                    Edit <span class="sr-only">Facility #{ facility.id }</span>
+                  </a>
+                </DataCell>
+              </tr>
+            ))
+          }
+        </Fragment>
+      </Table>
+    </div>
+  </div>
 </ApplicationLayout>

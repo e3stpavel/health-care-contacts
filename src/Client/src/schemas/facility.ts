@@ -19,7 +19,7 @@ export const selectFacilitySchema = z.object({
   // TODO: right now every time it is submitted, new facility type is created
   facilityTypeDescription: z.string().min(5),
 
-  squareFootage: z.number().positive().max(1000).optional(),
+  squareFootage: z.coerce.number().positive().max(1000).optional(),
   // partOfFacility: z.lazy(() => selectFacilitySchema),
   contacts: contactsSchema.default([]),
 })

@@ -1,0 +1,62 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+import { type Style, labelStyles } from './common'
+
+type HTMLInputProps = HTMLAttributes<'input'>
+
+interface Props extends HTMLInputProps {
+  label: string
+  name: string
+  type: NonNullable<HTMLInputProps['type']>
+  optional?: boolean
+  errors?: string[]
+  style?: Style
+}
+
+// TODO: generate random id
+const { label, name, type, errors = [], optional = false, style = 'default', ...attrs } = Astro.props
+const hasErrors = errors.length > 0
+
+const states = {
+  'text-red-900 ring-red-300 placeholder:text-red-300 focus:ring-red-500': hasErrors,
+  'text-gray-900 ring-gray-300 placeholder:text-gray-400': !hasErrors,
+}
+
+const styles = {
+  'ring-1 ring-inset shadow-sm': style === 'default',
+  '-mx-3 hover:bg-gray-50 focus:bg-gray-50': style === 'ghost',
+  'bg-red-50': style === 'ghost' && hasErrors,
+}
+
+---
+
+<div>
+  <div class="flex justify-between tracking-wide">
+    <label
+      for={name}
+      class:list={[
+        'block text-sm leading-6',
+        labelStyles(style),
+      ]}
+    >
+      {label}
+    </label>
+    { optional && <span class="text-sm text-gray-500 leading-6" id={`${name}-optional`}>Optional</span> }
+  </div>
+  <div class="mt-2">
+    <input
+      type={type}
+      name={name}
+      id={name}
+      class:list={[
+        'block w-full border-0 rounded-md px-3 py-1.5 tracking-wide sm:(text-sm leading-6) focus:(ring-2 ring-inset)',
+        states,
+        styles,
+      ]}
+      {...(hasErrors ? { 'aria-invalid': true } : {})}
+      aria-describedby={`${optional ? `${name}-optional` : ''} ${hasErrors ? `${name}-error` : ''}`}
+      {...attrs}
+    />
+  </div>
+  { hasErrors && <p class="mt-2 text-sm text-red-600 tracking-wide" id={`${name}-error`}>{ errors.at(0) }</p> }
+</div>

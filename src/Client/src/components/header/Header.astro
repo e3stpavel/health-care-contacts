@@ -18,7 +18,7 @@ const items = [
         <IconButton as="button" type="button" icon="i-material-symbols-menu-rounded" label="Open main menu" />
       </div>
 
-      <a href="/">
+      <a class="flex-shrink-0 md:-mx-4" href="/">
         <Image src={mark} height="56" alt="Utterly Complete Health Care" />
       </a>
     </div>
@@ -26,7 +26,12 @@ const items = [
     <Nav items={items} />
 
     <div class="flex flex-1 items-center justify-end gap-x-8">
-      <Button label="Star us" />
+      <Button
+        as="a"
+        href="/"
+        label="Star us"
+        trailingIcon="i-material-symbols-star-rounded"
+      />
     </div>
   </div>
   {/* TODO: mobile nav */}
