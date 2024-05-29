@@ -1,0 +1,155 @@
+---
+import Alert from '~/components/Alert.astro'
+import PageShell from '~/components/page/PageShell.html'
+import { Button } from '~/components/button'
+import PageHeading from '~/components/page/PageHeading.astro'
+import ApplicationLayout from '~/layouts/ApplicationLayout.astro'
+import { type Facility, selectFacilitySchema } from '~/schemas/facility'
+import { Input, Select } from '~/components/form'
+
+const { id } = Astro.params
+
+let response, facility, errors
+
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData()
+  const data = Object.fromEntries(formData)
+
+  const validation = selectFacilitySchema.safeParse(data)
+
+  if (!validation.success) {
+    facility = data as unknown as Facility
+    errors = validation.error.format()
+  }
+  else {
+    response = await fetch(`${import.meta.env.API}/facilities/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(validation.data),
+    })
+  }
+}
+else {
+  response = await fetch(`${import.meta.env.API}/facilities/${id}`)
+}
+
+if (response) {
+  if (!response.ok) {
+    if (response.status === 404)
+      return Astro.redirect('/404')
+
+    throw new Error(`Request failed with status ${response.status}`)
+  }
+
+  facility = await response.json() as Facility
+}
+
+---
+
+<ApplicationLayout>
+  {
+    Astro.request.method === 'POST'
+    && response?.ok
+    && (
+      <div class="mx-auto max-w-7xl px-4 lg:px-8 sm:px-6">
+        <Alert
+          label={`Facility #${facility?.id} was successfully updated`}
+          icon="i-material-symbols-check-circle-rounded"
+        />
+      </div>
+    )
+  }
+
+  <PageHeading
+    title={facility?.description ?? 'Facility'}
+    leadingLabel={`Facility #${facility?.id}`}
+  >
+    {/* TODO: add danger style, add logic */}
+    <Button
+      id="delete-button"
+      as="button"
+      type="button"
+      label="Delete"
+      style="secondary"
+    />
+  </PageHeading>
+
+  <PageShell>
+    <div class="grid grid-cols-1 grid-rows-1 mb-16 items-start gap-8 lg:grid-cols-3">
+      <!-- General card -->
+      <div class="px-4 py-8 shadow-sm ring-1 ring-gray-900/5 lg:(col-span-2 row-span-2 row-end-2) -mx-4 sm:(mx-0 rounded-lg px-8)">
+        <h2 class="text-lg text-gray-900 font-semibold leading-6">General</h2>
+        <form method="post" class="grid grid-cols-1 mt-6 text-sm leading-6 tracking-wide sm:grid-cols-2">
+          <input type="hidden" name="id" value={facility?.id} />
+          <div class="sm:pr-4">
+            <Input
+              type="text"
+              label="Description"
+              name="description"
+              required
+              value={facility?.description}
+              placeholder={!facility?.description ? '[empty]' : null}
+              errors={errors?.description?._errors}
+              style="ghost"
+            />
+          </div>
+          <div class="mt-2 sm:(mt-0 pl-4)">
+            {/* TODO: this can be done in a better way */}
+            <Select
+              label="Type"
+              name="dummy_type"
+              style="ghost"
+              disabled
+            >
+              <option selected>{ facility?.type }</option>
+            </Select>
+            <input type="hidden" name="type" value={facility?.type} />
+          </div>
+          <div class="mt-6 border-t border-gray-900/5 pt-6 sm:pr-4">
+            <Input
+              label="Facility Type Description"
+              name="facilityTypeDescription"
+              type="text"
+              required
+              value={facility?.facilityTypeDescription}
+              placeholder={!facility?.facilityTypeDescription ? '[empty]' : null}
+              errors={errors?.facilityTypeDescription?._errors}
+              style="ghost"
+            />
+          </div>
+          <div class="mt-2 sm:(mt-6 border-t border-gray-900/5 pl-4 pt-6)">
+            <Input
+              label="Square Footage"
+              name="squareFootage"
+              type="number"
+              min="0"
+              max="1000"
+              value={facility?.squareFootage}
+              placeholder={!facility?.squareFootage ? '[null]' : null}
+              errors={errors?.squareFootage?._errors}
+              style="ghost"
+            />
+          </div>
+          <div class="col-span-full mt-6 border-t border-gray-900/5 pt-6">
+            <Button
+              as="button"
+              type="submit"
+              label="Save changes"
+            />
+          </div>
+        </form>
+      </div>
+
+      <!-- Contacts card -->
+      <div class="rounded-lg bg-gray-50 p-6 shadow-sm ring-1 ring-gray-900/5 lg:(col-start-3 row-end-1)">
+        <h2 class="text-lg text-gray-900 font-semibold leading-6">
+          Contacts
+          <span class="ml-1 inline-flex items-center rounded-full bg-gray-200 px-1.5 py-0.5 align-text-bottom text-xs text-gray-600 font-medium ring-1 ring-gray-500/10 ring-inset">10</span>
+        </h2>
+        <div class="mt-6 w-full flex flex-none gap-x-4 border-t border-gray-900/5 pt-6">
+          <p class="text-sm">Contacts goes here..</p>
+        </div>
+      </div>
+    </div>
+  </PageShell>
+</ApplicationLayout>

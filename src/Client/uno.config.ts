@@ -4,6 +4,7 @@ import uno, { type Theme } from 'unocss/preset-uno'
 import icons from 'unocss/preset-icons'
 
 import { theme } from 'unocss/preset-mini'
+import { sizes } from './src/components/table/common'
 
 const sans = theme.fontFamily.sans
 
@@ -27,15 +28,26 @@ export default defineConfig<Theme>({
   theme: {
     colors: {
       brand: {
-        'blue': '#03668D',
-        'green': '#02523D',
-        'navy-blue': '#023C52',
+        // blue: '#03668D',
+        green: '#02523D',
+        blue: {
+          50: '#f0faff',
+          500: '#07b8f0',
+          600: '#0094cd',
+          700: '#0075a6',
+          800: '#03668d',
+        },
       },
     },
     fontFamily: {
       sans: `-apple-system,BlinkMacSystemFont,'Pretendard Std Variable','Pretendard Std',Pretendard,ui-sans-serif,system-ui,${sans.split(',').slice(4).join(',')}`,
     },
   },
+
+  // https://unocss.dev/guide/extracting#safelist
+  safelist: [
+    ...sizes.map(breakpoint => `${breakpoint}:table-cell`),
+  ],
 
   preflights: [
     {
@@ -46,7 +58,7 @@ export default defineConfig<Theme>({
 
         *:focus-visible {
           outline-width: medium;
-          outline-offset: -2px;
+          outline-offset: -1px;
         }
       `,
     },

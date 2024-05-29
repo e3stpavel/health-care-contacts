@@ -1,0 +1,20 @@
+---
+import BaseLayout from './BaseLayout.astro'
+import { Footer } from '~/components/footer'
+import { Header } from '~/components/header'
+
+interface Props {
+  title?: string
+}
+
+---
+
+<BaseLayout title={Astro.props.title ?? 'Dashboard'}>
+  <div class="min-h-full flex flex-col">
+    <Header />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </div>
+</BaseLayout>

@@ -1,0 +1,38 @@
+---
+import type { CellProps } from './common'
+
+type Props = CellProps & {
+  /** @default false */
+  formatNumbers?: boolean
+
+  /** @default 'default' */
+  emphasis?: 'high' | 'low' | 'default'
+}
+
+const props = Astro.props
+
+let breakpoint = ''
+if (props.suppressOnMobile)
+  breakpoint = `${props.breakpoint}:table-cell`
+
+const emphasis = props.emphasis ?? 'default'
+const emphasises = {
+  'font-medium': emphasis === 'high',
+  'text-gray-500': emphasis === 'low',
+  'text-gray-900': emphasis === 'default',
+}
+
+---
+
+<td
+  scope="col"
+  class:list={[
+    { hidden: props.suppressOnMobile },
+    breakpoint,
+    emphasises,
+    { 'font-mono': props.formatNumbers },
+    'whitespace-nowrap max-w-xs truncate px-3 py-2 text-sm tracking-wide first:(pl-4 pr-3 sm:pl-6) last:(pl-3 pr-4 text-right sm:pr-6)',
+  ]}
+>
+  <slot />
+</td>

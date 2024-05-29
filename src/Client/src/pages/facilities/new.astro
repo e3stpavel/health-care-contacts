@@ -1,0 +1,120 @@
+---
+import PageHeading from '~/components/page/PageHeading.astro'
+import PageShell from '~/components/page/PageShell.html'
+import { Button } from '~/components/button'
+import { Input, Select } from '~/components/form'
+import ApplicationLayout from '~/layouts/ApplicationLayout.astro'
+import { type Facility, facilityTypes, insertFacilitySchema } from '~/schemas/facility'
+
+let errors
+
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData()
+  const data = Object.fromEntries(formData)
+
+  const validation = insertFacilitySchema.safeParse(data)
+
+  if (validation.success) {
+    const response = await fetch(`${import.meta.env.API}/facilities`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(validation.data),
+    })
+
+    if (!response.ok)
+      throw new Error(`Request failed with status ${response.status}`)
+
+    const { id } = await response.json() as Facility
+    return Astro.redirect(`/facilities/${id}`)
+  }
+
+  errors = validation.error.format()
+}
+
+---
+
+<ApplicationLayout>
+  <PageHeading
+    title="Facility"
+    trailingLabel="Create new facility and save it to the database"
+  />
+
+  <PageShell>
+    <form method="post">
+      <div class="space-y-12">
+        <div class="border-b border-gray-900/10 pb-12">
+          <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div class="sm:col-span-3">
+              <Input
+                label="Description"
+                name="description"
+                type="text"
+                required
+                errors={errors?.description?._errors}
+              />
+            </div>
+            <div class="sm:col-span-3">
+              <Select label="Type" name="type">
+                {
+                  facilityTypes.map(type => (
+                    <option>{ type }</option>
+                  ))
+                }
+              </Select>
+            </div>
+
+            <div class="sm:col-span-4">
+              <Input
+                label="Facility Type Description"
+                name="facilityTypeDescription"
+                type="text"
+                required
+                list="facilityTypeDescriptionList"
+                errors={errors?.facilityTypeDescription?._errors}
+              />
+              <!-- <datalist id="facilityTypeDescriptionList">
+                {/* TODO: fetch facility types from api */}
+                <option value="test"></option>
+                <option value="test2"></option>
+              </datalist> -->
+            </div>
+            <div class="sm:col-span-2">
+              <Input
+                label="Square Footage"
+                name="squareFootage"
+                type="number"
+                min="0"
+                max="1000"
+                optional
+                errors={errors?.squareFootage?._errors}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* TODO: contacts section */}
+        <!-- <div class="border-b border-gray-900/10 pb-12">
+          <h2 class="text-base text-gray-900 font-semibold leading-7">Personal Information</h2>
+          <p class="mt-1 text-sm text-gray-600 leading-6">Use a permanent address where you can receive mail.</p>
+
+          <div class="grid grid-cols-1 mt-10 gap-x-6 gap-y-8 sm:grid-cols-6">
+          </div>
+        </div> -->
+      </div>
+
+      <div class="mt-6 flex items-center justify-end gap-x-2">
+        <Button
+          as="a"
+          href="/facilities"
+          label="Cancel"
+          style="secondary"
+        />
+        <Button
+          as="button"
+          type="submit"
+          label="Save"
+        />
+      </div>
+    </form>
+  </PageShell>
+</ApplicationLayout>

@@ -1,0 +1,47 @@
+---
+import type { Polymorphic } from 'astro/types'
+import type { AsProps } from './common'
+
+type Props<Tag extends AsProps['as'] = 'button' | 'a'> = Polymorphic<{
+  as: Tag
+  label: string
+  leadingIcon?: string
+  trailingIcon?: string
+  style?: 'primary' | 'secondary'
+}> & AsProps
+
+const { as: Tag, label, trailingIcon, leadingIcon, style = 'primary', ...attrs } = Astro.props
+
+const styles = {
+  'bg-brand-blue-600 text-white hover:bg-brand-blue-700': style === 'primary',
+  'bg-gray-200 text-gray-900 hover:bg-gray-300': style === 'secondary',
+}
+
+const IconTag = 'span'
+// eslint-disable-next-line antfu/top-level-function
+const iconAttrs = (icon: string) => ({
+  'class:list': [
+    icon,
+    '-mx-1',
+    'size-4',
+    {
+      'text-brand-blue-50': style === 'primary',
+      'text-gray-700': style === 'secondary',
+    },
+  ],
+  'aria-hidden': true,
+})
+
+---
+
+<Tag
+  class:list={[
+    'inline-flex items-center whitespace-nowrap gap-x-2 border border-transparent rounded-md px-3 py-1.5 text-sm font-medium tracking-wide shadow-sm focus-visible:(outline-none ring-2 ring-offset-2 ring-brand-blue-500)',
+    styles,
+  ]}
+  {...attrs as any}
+>
+  { leadingIcon && <IconTag {...iconAttrs(leadingIcon)} /> }
+  { label }
+  { trailingIcon && <IconTag {...iconAttrs(trailingIcon)} /> }
+</Tag>

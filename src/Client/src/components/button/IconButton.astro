@@ -1,0 +1,29 @@
+---
+import type { Polymorphic } from 'astro/types'
+import type { AsProps } from './common'
+
+type Props<Tag extends AsProps['as'] = 'button' | 'a'> = Polymorphic<{
+  as: Tag
+  label: string
+  icon: string
+  size?: 'sm' | 'md'
+}> & AsProps
+
+const { as: Tag, label, icon, size = 'md', ...attrs } = Astro.props
+
+---
+
+<Tag class="inline-flex items-center justify-center border border-transparent rounded-md p-1.5 -mx-1.5 hover:(bg-gray-100 text-gray-700) focus-visible:(outline-none ring-2 ring-brand-blue-500 ring-inset)" aria-expanded="false" {...attrs as any}>
+  <span class="sr-only">{label}</span>
+  <span
+    class:list={[
+      icon,
+      'block',
+      {
+        'size-5': size === 'sm',
+        'size-6': size === 'md',
+      },
+    ]}
+    aria-hidden="true"
+  />
+</Tag>

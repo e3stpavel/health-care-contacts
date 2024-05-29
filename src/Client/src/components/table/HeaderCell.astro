@@ -1,0 +1,14 @@
+---
+import type { CellProps as Props } from './common'
+
+const props = Astro.props
+
+let breakpoint = ''
+if (props.suppressOnMobile)
+  breakpoint = `${props.breakpoint}:table-cell`
+
+---
+
+<th scope="col" class:list={[{ hidden: props.suppressOnMobile }, breakpoint, 'px-3 py-3.5 text-sm text-left tracking-wide text-gray-900 font-semibold first:(pl-4 pr-3 sm:pl-6) last:(pl-3 pr-4 sm:pr-6)']}>
+  <slot />
+</th>

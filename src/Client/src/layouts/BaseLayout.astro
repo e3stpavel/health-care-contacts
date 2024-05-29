@@ -1,7 +1,4 @@
 ---
-import Header from '../components/navigation/Header.astro'
-import Footer from '../components/navigation/Footer.astro'
-
 interface Props {
   title?: string
 }
@@ -20,12 +17,8 @@ const title = Astro.props.title ?? 'Health Care'
     <meta name="generator" content={Astro.generator} />
     <title>{title} - {suffix}</title>
   </head>
-  <body class="flex flex-col">
-    <Header />
-    <main class="flex-1">
-      <slot />
-    </main>
-    <Footer />
+  <body>
+    <slot />
   </body>
 </html>
 
@@ -35,6 +28,7 @@ const title = Astro.props.title ?? 'Health Care'
   }
 
   body {
+    height: 100%;
     min-height: 100%;
   }
 </style>
